@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Bullet</string>
+    <string name="main_menu_settings_title">Settings</string>
+    <string name="main_forums_title">Forums</string>
+    <string name="main_bookmarks_title">Bookmarks</string>
+    <string name="main_forum_dialog_title">Edit Forum</string>
+    <string name="main_forum_dialog_url">Forum URL...</string>
+    <string name="main_forum_dialog_cancel">Cancel</string>
+    <string name="main_forum_dialog_ok">Ok</string>
+</resources>
