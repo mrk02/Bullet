@@ -32,8 +32,8 @@ public class MainFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    final Toolbar toolbar = view.findViewById(R.id.main_toolbar);
 
+    final Toolbar toolbar = view.findViewById(R.id.main_toolbar);
     new MenuInflater(getContext()).inflate(R.menu.main, toolbar.getMenu());
 
     final PagerAdapter adapter = new PagerAdapter(getContext(), getChildFragmentManager())

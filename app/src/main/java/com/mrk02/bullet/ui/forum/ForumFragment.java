@@ -6,19 +6,13 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.tabs.TabLayout;
 import com.mrk02.bullet.R;
-import com.mrk02.bullet.ui.PagerAdapter;
-import com.mrk02.bullet.ui.main.MainBookmarksFragment;
-import com.mrk02.bullet.ui.main.MainForumsFragment;
-import com.mrk02.bullet.ui.main.MainViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.ViewPager;
 
 public class ForumFragment extends Fragment {
 
@@ -41,6 +35,9 @@ public class ForumFragment extends Fragment {
     if (vm == null) {
       vm = new ViewModelProvider(getActivity()).get(ForumViewModel.class);
     }
+
+    final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
+    new MenuInflater(getContext()).inflate(R.menu.forum, toolbar.getMenu());
   }
 
 }
