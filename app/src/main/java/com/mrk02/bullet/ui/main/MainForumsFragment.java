@@ -51,6 +51,7 @@ public class MainForumsFragment extends Fragment {
 
     final MainForumsAdapter adapter = new MainForumsAdapter(
         forum -> getActivity().getSupportFragmentManager().beginTransaction()
+            .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
             .replace(R.id.container, ForumFragment.newInstance())
             .addToBackStack(null)
             .commit(),
