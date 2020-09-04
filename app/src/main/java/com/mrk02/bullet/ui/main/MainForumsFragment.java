@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrk02.bullet.R;
 import com.mrk02.bullet.model.Forum;
+import com.mrk02.bullet.ui.forum.ForumFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,8 +50,10 @@ public class MainForumsFragment extends Fragment {
     }
 
     final MainForumsAdapter adapter = new MainForumsAdapter(
-        forum -> {
-        },
+        forum -> getActivity().getSupportFragmentManager().beginTransaction()
+            .replace(R.id.container, ForumFragment.newInstance())
+            .addToBackStack(null)
+            .commit(),
         forum -> new MainForumDialog(forum).show(getChildFragmentManager(), "main-forum-dialog-" + forum.id));
 
     vm.findAllForums().observe(getActivity(), adapter::submitList);
