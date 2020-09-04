@@ -12,7 +12,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.room.Room;
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -21,7 +20,7 @@ public class MainViewModel extends AndroidViewModel {
   public MainViewModel(@NonNull Application application) {
     super(application);
 
-    final BulletDatabase database = Room.databaseBuilder(application, BulletDatabase.class, "bullet-db").build();
+    final BulletDatabase database = BulletDatabase.instance(application);
     forumDao = database.forumDao();
   }
 
@@ -38,6 +37,14 @@ public class MainViewModel extends AndroidViewModel {
   public void insertForum(Forum forum) {
     AsyncTask.execute(() -> forumDao.insert(forum));
   }
+
+  /**
+   * @param forum The forum to update.
+   */
+  public void updateForum(Forum forum) {
+    AsyncTask.execute(() -> forumDao.update(forum));
+  }
+
 
   /**
    * @param forum The forum to delete.

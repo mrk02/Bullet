@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * A placeholder fragment containing a simple view.
+ *
  */
 public class MainForumsFragment extends Fragment {
 
@@ -44,17 +44,16 @@ public class MainForumsFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
     if (vm == null) {
-      vm = new ViewModelProvider(this).get(MainViewModel.class);
+      vm = new ViewModelProvider(getActivity()).get(MainViewModel.class);
     }
 
     final MainForumsAdapter adapter = new MainForumsAdapter(
         forum -> {
         },
-        forum -> MainForumDialog.newInstance(forum).show(getChildFragmentManager(), "main-forum-dialog-" + forum.id));
+        forum -> new MainForumDialog(forum).show(getChildFragmentManager(), "main-forum-dialog-" + forum.id));
 
-    vm.findAllForums().observe(getViewLifecycleOwner(), adapter::submitList);
+    vm.findAllForums().observe(getActivity(), adapter::submitList);
 
     final RecyclerView list = view.findViewById(R.id.main_forums_list);
     list.setAdapter(adapter);

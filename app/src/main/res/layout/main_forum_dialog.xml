@@ -16,7 +16,21 @@
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/main_forum_dialog_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="@string/main_forum_dialog_name"
+        app:boxBackgroundMode="filled">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/main_forum_dialog_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -24,6 +38,7 @@
         app:boxBackgroundMode="filled">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/main_forum_dialog_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textUri" />
@@ -37,13 +52,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/main_forum_dialog_cancel"
+            android:id="@+id/main_forum_dialog_delete"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:text="@string/main_forum_dialog_cancel" />
+            android:text="@string/main_forum_dialog_delete" />
 
         <Button
             android:id="@+id/main_forum_dialog_ok"
