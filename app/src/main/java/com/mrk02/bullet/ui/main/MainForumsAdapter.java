@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mrk02.bullet.R;
 import com.mrk02.bullet.model.Forum;
 
@@ -55,6 +56,9 @@ public class MainForumsAdapter extends ListAdapter<Forum, MainForumsAdapter.View
 
     holder.title.setText(forum.name);
     holder.subtitle.setText(forum.url);
+    Glide.with(holder.itemView.getContext())
+        .load(forum.icon)
+        .into(holder.icon);
 
     holder.itemView.setOnClickListener(v -> onClick.accept(forum));
     holder.itemView.setOnLongClickListener(v -> {

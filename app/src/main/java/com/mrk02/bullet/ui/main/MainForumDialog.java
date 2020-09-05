@@ -25,8 +25,8 @@ public class MainForumDialog extends BottomSheetDialogFragment {
   private MainViewModel vm;
 
   /**
-   * @param forum
-   * @return
+   * @param forum The forum to show in this dialog.
+   * @return A new instance of this fragment.
    */
   public static MainForumDialog newInstance(Forum forum) {
     final MainForumDialog fragment = new MainForumDialog();
@@ -50,8 +50,8 @@ public class MainForumDialog extends BottomSheetDialogFragment {
 
     final TextInputEditText name = view.findViewById(R.id.main_forum_dialog_name);
     name.setText(forum.name);
-    final TextInputEditText url = view.findViewById(R.id.main_forum_dialog_url);
-    url.setText(forum.url);
+    final TextInputEditText icon = view.findViewById(R.id.main_forum_dialog_icon);
+    icon.setText(forum.icon);
 
     final Button delete = view.findViewById(R.id.main_forum_dialog_delete);
     delete.setOnClickListener(v -> {
@@ -63,8 +63,9 @@ public class MainForumDialog extends BottomSheetDialogFragment {
     ok.setOnClickListener(v -> {
       final Forum newForum = new Forum();
       newForum.id = forum.id;
+      newForum.url = forum.url;
       newForum.name = Objects.requireNonNull(name.getText()).toString();
-      newForum.url = Objects.requireNonNull(url.getText()).toString();
+      newForum.icon = Objects.requireNonNull(icon.getText()).toString();
       vm.updateForum(newForum);
       dismiss();
     });

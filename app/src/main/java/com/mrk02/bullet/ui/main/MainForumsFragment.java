@@ -67,6 +67,7 @@ public class MainForumsFragment extends Fragment {
       final Forum forum = new Forum();
       forum.name = "TestForum";
       forum.url = "google.de";
+      forum.icon = "https://www.deutsches-architekturforum.de/cms/images/favicon/7.favicon.ico";
       vm.insertForum(forum);
     });
   }

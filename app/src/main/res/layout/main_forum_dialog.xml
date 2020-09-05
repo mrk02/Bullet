@@ -39,11 +39,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:hint="@string/main_forum_dialog_url"
+        android:hint="@string/main_forum_dialog_icon"
         app:boxBackgroundMode="filled">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/main_forum_dialog_url"
+            android:id="@+id/main_forum_dialog_icon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textUri" />

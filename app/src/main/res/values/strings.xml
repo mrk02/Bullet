@@ -5,7 +5,7 @@
     <string name="main_bookmarks_title">Bookmarks</string>
     <string name="main_forum_dialog_title">Edit Forum</string>
     <string name="main_forum_dialog_name">Name</string>
-    <string name="main_forum_dialog_url">Forum URL</string>
+    <string name="main_forum_dialog_icon">Icon URL</string>
     <string name="main_forum_dialog_delete">Delete</string>
     <string name="main_forum_dialog_ok">OK</string>
     <string name="forum_menu_bookmark_title">Bookmark</string>
