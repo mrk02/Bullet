@@ -21,6 +21,7 @@ public class Forum implements Parcelable {
       return new Forum[size];
     }
   };
+
   @PrimaryKey(autoGenerate = true)
   public int id;
   @ColumnInfo
@@ -29,6 +30,8 @@ public class Forum implements Parcelable {
   public String icon;
   @ColumnInfo
   public String url;
+  @ColumnInfo
+  public String config;
 
   public Forum() {
 
@@ -39,6 +42,7 @@ public class Forum implements Parcelable {
     name = in.readString();
     icon = in.readString();
     url = in.readString();
+    config = in.readString();
   }
 
   @Override
@@ -47,6 +51,7 @@ public class Forum implements Parcelable {
     dest.writeString(name);
     dest.writeString(icon);
     dest.writeString(url);
+    dest.writeString(config);
   }
 
   @Override

@@ -1,14 +1,21 @@
 package com.mrk02.bullet.ui.main;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrk02.bullet.R;
-import com.mrk02.bullet.model.Forum;
 import com.mrk02.bullet.ui.forum.ForumFragment;
+
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +27,10 @@ import androidx.recyclerview.widget.RecyclerView;
  *
  */
 public class MainForumsFragment extends Fragment {
+
+  private static final String TAG = "MainForumsFragment";
+
+  private static final int REQUEST_FILE = 1234;
 
   private MainViewModel vm;
 
@@ -63,13 +74,31 @@ public class MainForumsFragment extends Fragment {
     list.setAdapter(adapter);
 
     final FloatingActionButton add = view.findViewById(R.id.main_forums_add);
-    add.setOnClickListener(v -> {
-      final Forum forum = new Forum();
-      forum.name = "TestForum";
-      forum.url = "google.de";
-      forum.icon = "https://www.deutsches-architekturforum.de/cms/images/favicon/7.favicon.ico";
-      vm.insertForum(forum);
-    });
+    add.setOnClickListener(v -> startActivityForResult(
+        Intent.createChooser(
+            new Intent()
+                .setType("application/zip")
+                .setAction(Intent.ACTION_GET_CONTENT),
+            getString(R.string.main_forums_add_title)),
+        REQUEST_FILE));
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    if (requestCode == REQUEST_FILE) {
+      if (resultCode == Activity.RESULT_OK) {
+        final Context context = Objects.requireNonNull(getContext());
+        try {
+          final Uri uri = Objects.requireNonNull(Objects.requireNonNull(data).getData());
+          vm.insertForum(uri);
+        } catch (Exception e) {
+          Log.e(TAG, "unable to load file", e);
+          Toast.makeText(context, R.string.main_forums_add_error, Toast.LENGTH_SHORT).show();
+        }
+      }
+    } else {
+      super.onActivityResult(requestCode, resultCode, data);
+    }
   }
 
 }

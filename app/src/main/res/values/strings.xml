@@ -2,6 +2,8 @@
     <string name="app_name">Bullet</string>
     <string name="main_menu_settings_title">Settings</string>
     <string name="main_forums_title">Forums</string>
+    <string name="main_forums_add_title">Select a *.zip file</string>
+    <string name="main_forums_add_error">Unable to open file</string>
     <string name="main_bookmarks_title">Bookmarks</string>
     <string name="main_forum_dialog_title">Edit Forum</string>
     <string name="main_forum_dialog_name">Name</string>

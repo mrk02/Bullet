@@ -1,13 +1,20 @@
 package com.mrk02.bullet.ui.main;
 
 import android.app.Application;
+import android.content.ContentResolver;
+import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.mrk02.bullet.model.Forum;
 import com.mrk02.bullet.repository.BulletDatabase;
 import com.mrk02.bullet.repository.ForumDao;
+import com.mrk02.bullet.service.Config;
+import com.mrk02.bullet.service.ConfigLoader;
+import com.mrk02.bullet.service.Page;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -32,24 +39,38 @@ public class MainViewModel extends AndroidViewModel {
   }
 
   /**
-   * @param forum The forum to insert.
-   */
-  public void insertForum(Forum forum) {
-    AsyncTask.execute(() -> forumDao.insert(forum));
-  }
-
-  /**
    * @param forum The forum to update.
    */
   public void updateForum(Forum forum) {
     AsyncTask.execute(() -> forumDao.update(forum));
   }
 
-
   /**
    * @param forum The forum to delete.
    */
   public void deleteForum(Forum forum) {
     AsyncTask.execute(() -> forumDao.delete(forum));
+  }
+
+  /**
+   * @param configUri
+   * @throws Exception
+   */
+  public void insertForum(Uri configUri) throws Exception {
+    AsyncTask.execute(() -> {
+      final ContentResolver contentResolver = getApplication().getContentResolver();
+      try (final InputStream inputStream = contentResolver.openInputStream(configUri)) {
+        final Config config = ConfigLoader.INSTANCE.load(Objects.requireNonNull(inputStream));
+        final Page page = config.parse(Config.MAIN, null);
+
+        final Forum forum = new Forum();
+        forum.name = page.getTitle();
+        forum.config = configUri.toString();
+        forumDao.insert(forum);
+
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 }
