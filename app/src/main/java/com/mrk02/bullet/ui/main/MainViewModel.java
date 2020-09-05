@@ -63,10 +63,10 @@ public class MainViewModel extends AndroidViewModel {
         final Config config = ConfigLoader.INSTANCE.load(Objects.requireNonNull(inputStream));
         final Page page = config.parse(Config.MAIN, null);
 
-        final Forum forum = new Forum();
-        forum.name = page.getTitle();
-        forum.config = configUri.toString();
-        forumDao.insert(forum);
+        forumDao.insert(Forum.builder()
+            .setName(page.getTitle())
+            .setConfig(configUri.toString())
+            .build());
 
       } catch (Exception e) {
         throw new RuntimeException(e);

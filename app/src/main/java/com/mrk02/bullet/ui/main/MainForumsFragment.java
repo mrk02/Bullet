@@ -20,6 +20,7 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,19 +57,20 @@ public class MainForumsFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    final FragmentActivity activity = Objects.requireNonNull(getActivity());
     if (vm == null) {
-      vm = new ViewModelProvider(getActivity()).get(MainViewModel.class);
+      vm = new ViewModelProvider(activity).get(MainViewModel.class);
     }
 
     final MainForumsAdapter adapter = new MainForumsAdapter(
-        forum -> getActivity().getSupportFragmentManager().beginTransaction()
+        forum -> activity.getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
             .replace(R.id.container, ForumFragment.newInstance())
             .addToBackStack(null)
             .commit(),
         forum -> MainForumDialog.newInstance(forum).show(getChildFragmentManager(), "main-forum-dialog-" + forum.id));
 
-    vm.findAllForums().observe(getActivity(), adapter::submitList);
+    vm.findAllForums().observe(activity, adapter::submitList);
 
     final RecyclerView list = view.findViewById(R.id.main_forums_list);
     list.setAdapter(adapter);

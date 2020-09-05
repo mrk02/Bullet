@@ -23,26 +23,38 @@ public class Forum implements Parcelable {
   };
 
   @PrimaryKey(autoGenerate = true)
-  public int id;
+  public final int id;
   @ColumnInfo
-  public String name;
+  public final String name;
   @ColumnInfo
-  public String icon;
+  public final String icon;
   @ColumnInfo
-  public String url;
+  public final String url;
   @ColumnInfo
-  public String config;
+  public final String config;
 
-  public Forum() {
-
+  public Forum(int id, String name, String icon, String url, String config) {
+    this.id = id;
+    this.name = name;
+    this.icon = icon;
+    this.url = url;
+    this.config = config;
   }
 
   protected Forum(Parcel in) {
-    id = in.readInt();
-    name = in.readString();
-    icon = in.readString();
-    url = in.readString();
-    config = in.readString();
+    this.id = in.readInt();
+    this.name = in.readString();
+    this.icon = in.readString();
+    this.url = in.readString();
+    this.config = in.readString();
+  }
+
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public Builder toBuilder() {
+    return new Builder(this);
   }
 
   @Override
@@ -58,4 +70,50 @@ public class Forum implements Parcelable {
   public int describeContents() {
     return 0;
   }
+
+  public static final class Builder {
+
+    private int id;
+    private String name;
+    private String icon;
+    private String url;
+    private String config;
+
+    private Builder() {
+
+    }
+
+    private Builder(Forum forum) {
+      this.id = forum.id;
+      this.name = forum.name;
+      this.icon = forum.icon;
+      this.url = forum.url;
+      this.config = forum.config;
+    }
+
+    public Builder setName(String name) {
+      this.name = name;
+      return this;
+    }
+
+    public Builder setIcon(String icon) {
+      this.icon = icon;
+      return this;
+    }
+
+    public Builder setUrl(String url) {
+      this.url = url;
+      return this;
+    }
+
+    public Builder setConfig(String config) {
+      this.config = config;
+      return this;
+    }
+
+    public Forum build() {
+      return new Forum(id, name, icon, url, config);
+    }
+  }
+
 }

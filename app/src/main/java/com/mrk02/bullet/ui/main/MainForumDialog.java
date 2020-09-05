@@ -61,13 +61,10 @@ public class MainForumDialog extends BottomSheetDialogFragment {
 
     final Button ok = view.findViewById(R.id.main_forum_dialog_ok);
     ok.setOnClickListener(v -> {
-      final Forum newForum = new Forum();
-      newForum.id = forum.id;
-      newForum.url = forum.url;
-      newForum.config = forum.config;
-      newForum.name = Objects.requireNonNull(name.getText()).toString();
-      newForum.icon = Objects.requireNonNull(icon.getText()).toString();
-      vm.updateForum(newForum);
+      vm.updateForum(forum.toBuilder()
+          .setName(Objects.requireNonNull(name.getText()).toString())
+          .setIcon(Objects.requireNonNull(icon.getText()).toString())
+          .build());
       dismiss();
     });
 
