@@ -117,6 +117,7 @@ public class MainForumDialog extends BottomSheetDialogFragment {
           Util.observeOnce(vm.loadPage(configUri), page -> {
             config.setText(configUri.toString());
             name.setText(page.getTitle());
+            icon.setText(page.getIcon());
           });
         } catch (Exception e) {
           Log.e(TAG, "unable to load file", e);
