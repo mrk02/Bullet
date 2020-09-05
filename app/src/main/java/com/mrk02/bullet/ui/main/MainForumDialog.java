@@ -13,27 +13,37 @@ import com.mrk02.bullet.model.Forum;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 public class MainForumDialog extends BottomSheetDialogFragment {
 
-  private final Forum forum;
+  private static final String KEY_FORUM = "MainForumDialog_forum";
 
+  private Forum forum;
   private MainViewModel vm;
 
   /**
    * @param forum
+   * @return
    */
-  public MainForumDialog(Forum forum) {
-    this.forum = forum;
+  public static MainForumDialog newInstance(Forum forum) {
+    final MainForumDialog fragment = new MainForumDialog();
+    final Bundle bundle = new Bundle();
+    bundle.putParcelable(KEY_FORUM, forum);
+    fragment.setArguments(bundle);
+    return fragment;
   }
 
   @Nullable
   @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     if (vm == null) {
       vm = new ViewModelProvider(getActivity()).get(MainViewModel.class);
+    }
+    if (forum == null) {
+      forum = getArguments().getParcelable(KEY_FORUM);
     }
 
     final View view = inflater.inflate(R.layout.main_forum_dialog, container, false);

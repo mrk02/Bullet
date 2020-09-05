@@ -55,7 +55,7 @@ public class MainForumsFragment extends Fragment {
             .replace(R.id.container, ForumFragment.newInstance())
             .addToBackStack(null)
             .commit(),
-        forum -> new MainForumDialog(forum).show(getChildFragmentManager(), "main-forum-dialog-" + forum.id));
+        forum -> MainForumDialog.newInstance(forum).show(getChildFragmentManager(), "main-forum-dialog-" + forum.id));
 
     vm.findAllForums().observe(getActivity(), adapter::submitList);
 
