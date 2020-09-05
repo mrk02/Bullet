@@ -5,7 +5,10 @@
     <string name="main_forums_add_title">Select a *.zip file</string>
     <string name="main_forums_add_error">Unable to open file</string>
     <string name="main_bookmarks_title">Bookmarks</string>
-    <string name="main_forum_dialog_title">Edit Forum</string>
+    <string name="main_forum_dialog_title_add">Add Forum</string>
+    <string name="main_forum_dialog_title_edit">Edit Forum</string>
+    <string name="main_forum_dialog_url">Forum URL</string>
+    <string name="main_forum_dialog_config">Config File</string>
     <string name="main_forum_dialog_name">Name</string>
     <string name="main_forum_dialog_icon">Icon URL</string>
     <string name="main_forum_dialog_delete">Delete</string>

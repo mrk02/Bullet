@@ -19,6 +19,7 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 public class MainViewModel extends AndroidViewModel {
 
@@ -39,10 +40,10 @@ public class MainViewModel extends AndroidViewModel {
   }
 
   /**
-   * @param forum The forum to update.
+   * @param forum The forum to insert.
    */
-  public void updateForum(Forum forum) {
-    AsyncTask.execute(() -> forumDao.update(forum));
+  public void insertForum(Forum forum) {
+    AsyncTask.execute(() -> forumDao.insert(forum));
   }
 
   /**
@@ -53,24 +54,22 @@ public class MainViewModel extends AndroidViewModel {
   }
 
   /**
-   * @param configUri
-   * @throws Exception
+   * @param configUri The uri from which to load the config file.
    */
-  public void insertForum(Uri configUri) throws Exception {
+  public LiveData<Page> loadPage(Uri configUri) {
+    final MutableLiveData<Page> liveData = new MutableLiveData<>();
+
     AsyncTask.execute(() -> {
       final ContentResolver contentResolver = getApplication().getContentResolver();
-      try (final InputStream inputStream = contentResolver.openInputStream(configUri)) {
+      try (InputStream inputStream = contentResolver.openInputStream(configUri)) {
         final Config config = ConfigLoader.INSTANCE.load(Objects.requireNonNull(inputStream));
         final Page page = config.parse(Config.MAIN, null);
-
-        forumDao.insert(Forum.builder()
-            .setName(page.getTitle())
-            .setConfig(configUri.toString())
-            .build());
-
+        liveData.postValue(page);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
     });
+
+    return liveData;
   }
 }
