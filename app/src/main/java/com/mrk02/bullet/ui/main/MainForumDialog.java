@@ -112,7 +112,8 @@ public class MainForumDialog extends BottomSheetDialogFragment {
       if (resultCode == Activity.RESULT_OK) {
         try {
           final Uri configUri = Objects.requireNonNull(Objects.requireNonNull(data).getData());
-          Util.observeOnce(vm.loadPage(configUri), page -> {
+          final String url = Objects.requireNonNull(this.url.getText()).toString();
+          Util.observeOnce(vm.loadPage(configUri, url), page -> {
             config.setText(configUri.toString());
             name.setText(page.getTitle());
             icon.setText(page.getIcon());

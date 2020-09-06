@@ -55,15 +55,16 @@ public class MainViewModel extends AndroidViewModel {
 
   /**
    * @param configUri The uri from which to load the config file.
+   * @param url       The url of the page to load.
    */
-  public LiveData<Page> loadPage(Uri configUri) {
+  public LiveData<Page> loadPage(@NonNull Uri configUri, @NonNull String url) {
     final MutableLiveData<Page> liveData = new MutableLiveData<>();
 
     AsyncTask.execute(() -> {
       final ContentResolver contentResolver = getApplication().getContentResolver();
       try (InputStream inputStream = contentResolver.openInputStream(configUri)) {
         final Config config = ConfigLoader.INSTANCE.load(Objects.requireNonNull(inputStream));
-        final Page page = config.parse(Config.MAIN, null);
+        final Page page = config.parse(Config.MAIN, url);
         liveData.postValue(page);
       } catch (Exception e) {
         throw new RuntimeException(e);

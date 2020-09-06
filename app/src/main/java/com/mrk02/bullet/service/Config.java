@@ -3,6 +3,8 @@ package com.mrk02.bullet.service;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
@@ -37,19 +39,15 @@ public final class Config {
    * @param page The name of the page to parse.
    * @param url  The url to parse.
    * @return The parsed page.
-   * @throws IOException
+   * @throws Exception if the page could not be parsed.
    */
   public Page parse(@NonNull String page, @NonNull String url) throws Exception {
-    final Template template = Objects.requireNonNull(templates.get(page));
-
-    final Context context = new VelocityContext();
-
     try (PipedWriter pipedWriter = new PipedWriter();
          PipedReader pipedReader = new PipedReader(pipedWriter)) {
 
       new Thread(() -> {
         try (Writer writer = pipedWriter) {
-          template.merge(context, writer);
+          parse(page, url, writer);
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
@@ -57,6 +55,16 @@ public final class Config {
 
       return XML_SERIALIZER.read(Page.class, pipedReader);
     }
+  }
+
+  private void parse(@NonNull String page, @NonNull String url, Writer writer) throws IOException {
+    final Document document = Jsoup.connect(url).get();
+
+    final Context context = new VelocityContext();
+    context.put("doc", document);
+
+    final Template template = Objects.requireNonNull(templates.get(page));
+    template.merge(context, writer);
   }
 
 
