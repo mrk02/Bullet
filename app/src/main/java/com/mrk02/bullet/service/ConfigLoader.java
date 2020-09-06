@@ -29,10 +29,10 @@ public final class ConfigLoader {
   }
 
   /**
-   * @param inputStream
-   * @return
-   * @throws IOException
-   * @throws ParseException
+   * @param inputStream The inputStream from which to load the config.
+   * @return The loaded config.
+   * @throws IOException    if an IO error occurred.
+   * @throws ParseException if a template could not be parsed.
    */
   @NonNull
   public Config load(@NonNull InputStream inputStream) throws IOException, ParseException {
@@ -59,8 +59,9 @@ public final class ConfigLoader {
   }
 
   /**
-   * @param inputStream
-   * @return
+   * @param inputStream The inputStream from which to load the template.
+   * @return The loaded template.
+   * @throws ParseException if the template could not be parsed.
    */
   private Template loadTemplate(InputStream inputStream) throws ParseException {
     final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -80,7 +81,10 @@ public final class ConfigLoader {
   }
 
   /**
-   *
+   * A reader which can not be closed.
+   * For some reason the velocity parser closes the reader given to it, which prevents us from
+   * reading the rest of the entries in the zip file. To circumvent this, wrap the reader with this
+   * reader which can not be closed.
    */
   private static final class UnclosableReader extends Reader {
 
@@ -96,7 +100,7 @@ public final class ConfigLoader {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
 
     }
   }

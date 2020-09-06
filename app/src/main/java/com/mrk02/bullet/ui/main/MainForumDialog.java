@@ -1,7 +1,6 @@
 package com.mrk02.bullet.ui.main;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -111,7 +110,6 @@ public class MainForumDialog extends BottomSheetDialogFragment {
   public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode == REQUEST_FILE) {
       if (resultCode == Activity.RESULT_OK) {
-        final Context context = Objects.requireNonNull(getContext());
         try {
           final Uri configUri = Objects.requireNonNull(Objects.requireNonNull(data).getData());
           Util.observeOnce(vm.loadPage(configUri), page -> {
@@ -121,7 +119,7 @@ public class MainForumDialog extends BottomSheetDialogFragment {
           });
         } catch (Exception e) {
           Log.e(TAG, "unable to load file", e);
-          Toast.makeText(context, R.string.main_forums_add_error, Toast.LENGTH_SHORT).show();
+          Toast.makeText(getContext(), R.string.main_forums_add_error, Toast.LENGTH_SHORT).show();
         }
       }
     } else {

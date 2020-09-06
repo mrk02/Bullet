@@ -6,15 +6,12 @@
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:paddingStart="16dp"
-    android:paddingTop="10dp"
-    android:paddingEnd="16dp"
-    android:paddingBottom="10dp">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/main_forums_item_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"

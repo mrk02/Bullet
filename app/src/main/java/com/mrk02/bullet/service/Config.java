@@ -9,10 +9,9 @@ import org.simpleframework.xml.core.Persister;
 import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+import java.io.Writer;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 
@@ -23,7 +22,6 @@ public final class Config {
 
   public static final String MAIN = "main.vm";
 
-  private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(2);
   private static final Serializer XML_SERIALIZER = new Persister();
 
   private final Map<String, Template> templates;
@@ -49,12 +47,15 @@ public final class Config {
     try (PipedWriter pipedWriter = new PipedWriter();
          PipedReader pipedReader = new PipedReader(pipedWriter)) {
 
-      EXECUTOR_SERVICE.submit(() -> {
-        template.merge(context, pipedWriter);
-        pipedWriter.close();
-        return null;
-      });
-      return EXECUTOR_SERVICE.submit(() -> XML_SERIALIZER.read(Page.class, pipedReader)).get();
+      new Thread(() -> {
+        try (Writer writer = pipedWriter) {
+          template.merge(context, writer);
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }).start();
+
+      return XML_SERIALIZER.read(Page.class, pipedReader);
     }
   }
 

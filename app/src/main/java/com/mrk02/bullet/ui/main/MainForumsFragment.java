@@ -58,7 +58,7 @@ public class MainForumsFragment extends Fragment {
             .replace(R.id.container, ForumFragment.newInstance())
             .addToBackStack(null)
             .commit(),
-        forum -> MainForumDialog.newInstance(forum).show(getChildFragmentManager(), "main-forum-dialog-" + forum.id));
+        forum -> MainForumDialog.newInstance(forum).show(getChildFragmentManager(), null));
 
     vm.findAllForums().observe(activity, adapter::submitList);
 
@@ -66,7 +66,7 @@ public class MainForumsFragment extends Fragment {
     list.setAdapter(adapter);
 
     final FloatingActionButton add = view.findViewById(R.id.main_forums_add);
-    add.setOnClickListener(v -> MainForumDialog.newInstance(null).show(getChildFragmentManager(), "main-forum-dialog"));
+    add.setOnClickListener(v -> MainForumDialog.newInstance(null).show(getChildFragmentManager(), null));
   }
 
 }
