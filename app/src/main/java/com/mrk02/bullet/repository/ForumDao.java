@@ -18,7 +18,7 @@ public interface ForumDao {
   LiveData<List<Forum>> findAll();
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insert(Forum forum);
+  long insert(Forum forum);
 
   @Delete
   void delete(Forum forum);

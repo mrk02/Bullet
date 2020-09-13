@@ -1,22 +1,80 @@
 package com.mrk02.bullet.ui.forum;
 
 import android.app.Application;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.os.AsyncTask;
 
-import com.mrk02.bullet.repository.BulletDatabase;
-import com.mrk02.bullet.repository.ForumDao;
+import com.mrk02.bullet.service.Config;
+import com.mrk02.bullet.service.ConfigLoader;
+import com.mrk02.bullet.service.Page;
+import com.mrk02.bullet.ui.main.MainViewModel;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 public class ForumViewModel extends AndroidViewModel {
 
-  private final ForumDao forumDao;
+  private static Config config;
+  private static long forumId = -1;
 
+  private final MutableLiveData<Page> livePage = new MutableLiveData<>();
+
+  /**
+   * @param application The application.
+   */
   public ForumViewModel(@NonNull Application application) {
     super(application);
-
-    final BulletDatabase database = BulletDatabase.instance(application);
-    forumDao = database.forumDao();
   }
-  
+
+  @NonNull
+  public static Config loadConfig(@NonNull Context context, long forumId) {
+    if (ForumViewModel.forumId != forumId) {
+      synchronized (ForumViewModel.class) {
+        if (ForumViewModel.forumId != forumId) {
+          final ContentResolver contentResolver = context.getContentResolver();
+          try (InputStream inputStream = new FileInputStream(MainViewModel.getConfigFile(context, forumId))) {
+            ForumViewModel.config = ConfigLoader.INSTANCE.load(Objects.requireNonNull(inputStream));
+            ForumViewModel.forumId = forumId;
+          } catch (Exception e) {
+            ForumViewModel.config = null;
+            ForumViewModel.forumId = -1;
+            throw new RuntimeException(e);
+          }
+        }
+      }
+    }
+
+    return config;
+  }
+
+  /**
+   * @param forumId The id of the forum whose config file to load.
+   * @param url     The url of the page to load.
+   */
+  public void loadPage(long forumId, @NonNull String url) {
+    AsyncTask.execute(() -> {
+      try {
+        final Config config = loadConfig(getApplication(), forumId);
+        final Page page = config.parse(Config.MAIN, url);
+        livePage.postValue(page);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
+
+  /**
+   * @return the page.
+   */
+  public LiveData<Page> getPage() {
+    return livePage;
+  }
+
 }

@@ -55,7 +55,7 @@ public class MainForumsFragment extends Fragment {
     final MainForumsAdapter adapter = new MainForumsAdapter(
         forum -> activity.getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
-            .replace(R.id.container, ForumFragment.newInstance())
+            .replace(R.id.container, ForumFragment.newInstance(forum, forum.url))
             .addToBackStack(null)
             .commit(),
         forum -> MainForumDialog.newInstance(forum).show(getChildFragmentManager(), null));
