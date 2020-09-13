@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import com.mrk02.bullet.service.Config;
 import com.mrk02.bullet.service.ConfigLoader;
 import com.mrk02.bullet.service.Page;
-import com.mrk02.bullet.ui.main.MainViewModel;
+import com.mrk02.bullet.ui.main.MainForumDialogViewModel;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -39,7 +39,7 @@ public class ForumViewModel extends AndroidViewModel {
       synchronized (ForumViewModel.class) {
         if (ForumViewModel.forumId != forumId) {
           final ContentResolver contentResolver = context.getContentResolver();
-          try (InputStream inputStream = new FileInputStream(MainViewModel.getConfigFile(context, forumId))) {
+          try (InputStream inputStream = new FileInputStream(MainForumDialogViewModel.getConfigFile(context, forumId))) {
             ForumViewModel.config = ConfigLoader.INSTANCE.load(Objects.requireNonNull(inputStream));
             ForumViewModel.forumId = forumId;
           } catch (Exception e) {

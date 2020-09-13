@@ -24,7 +24,8 @@ public class ForumFragment extends Fragment {
 
   private ForumViewModel vm;
 
-  public static ForumFragment newInstance(Forum forum, String url) {
+  @NonNull
+  public static ForumFragment newInstance(@NonNull Forum forum, @NonNull String url) {
     final ForumFragment fragment = new ForumFragment();
     final Bundle bundle = new Bundle();
     bundle.putParcelable(KEY_FORUM, forum);
@@ -47,9 +48,8 @@ public class ForumFragment extends Fragment {
       vm = new ViewModelProvider(this).get(ForumViewModel.class);
     }
 
-    final Bundle arguments = Objects.requireNonNull(getArguments());
-    final Forum forum = Objects.requireNonNull(arguments.getParcelable(KEY_FORUM));
-    final String url = Objects.requireNonNull(arguments.getString(KEY_URL));
+    final Forum forum = Objects.requireNonNull(requireArguments().getParcelable(KEY_FORUM));
+    final String url = Objects.requireNonNull(requireArguments().getString(KEY_URL));
 
     vm.loadPage(forum.id, url);
 

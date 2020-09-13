@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -26,11 +25,11 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-public class MainViewModel extends AndroidViewModel {
+public class MainForumDialogViewModel extends AndroidViewModel {
 
   private final ForumDao forumDao;
 
-  public MainViewModel(@NonNull Application application) {
+  public MainForumDialogViewModel(@NonNull Application application) {
     super(application);
 
     final BulletDatabase database = BulletDatabase.instance(application);
@@ -39,13 +38,6 @@ public class MainViewModel extends AndroidViewModel {
 
   public static File getConfigFile(Context context, long forumId) {
     return new File(context.getFilesDir(), "config/" + forumId);
-  }
-
-  /**
-   * @return All forums.
-   */
-  public LiveData<List<Forum>> findAllForums() {
-    return forumDao.findAll();
   }
 
   /**
@@ -95,7 +87,7 @@ public class MainViewModel extends AndroidViewModel {
 
     AsyncTask.execute(() -> {
       try (InputStream inputStream = openUri(configUri)) {
-        final Config config = ConfigLoader.INSTANCE.load(Objects.requireNonNull(inputStream));
+        final Config config = ConfigLoader.INSTANCE.load(inputStream);
         final Page page = config.parse(Config.MAIN, url);
         liveData.postValue(page);
       } catch (Exception e) {
@@ -106,9 +98,10 @@ public class MainViewModel extends AndroidViewModel {
     return liveData;
   }
 
+  @NonNull
   private InputStream openUri(@NonNull Uri uri) throws FileNotFoundException {
     final ContentResolver contentResolver = getApplication().getContentResolver();
-    return contentResolver.openInputStream(uri);
+    return Objects.requireNonNull(contentResolver.openInputStream(uri));
   }
 
 }

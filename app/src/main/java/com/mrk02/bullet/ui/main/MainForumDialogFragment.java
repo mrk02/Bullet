@@ -25,13 +25,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
-public class MainForumDialog extends BottomSheetDialogFragment {
+public class MainForumDialogFragment extends BottomSheetDialogFragment {
 
   private static final String TAG = "MainForumDialog";
   private static final String KEY_FORUM = "MainForumDialog_forum";
   private static final int REQUEST_FILE = 1;
 
-  private MainViewModel vm;
+  private MainForumDialogViewModel vm;
 
   private TextInputEditText url;
   private TextInputEditText config;
@@ -42,8 +42,8 @@ public class MainForumDialog extends BottomSheetDialogFragment {
    * @param forum The forum to show in this dialog.
    * @return A new instance of this fragment.
    */
-  public static MainForumDialog newInstance(Forum forum) {
-    final MainForumDialog fragment = new MainForumDialog();
+  public static MainForumDialogFragment newInstance(Forum forum) {
+    final MainForumDialogFragment fragment = new MainForumDialogFragment();
     final Bundle bundle = new Bundle();
     bundle.putParcelable(KEY_FORUM, forum);
     fragment.setArguments(bundle);
@@ -54,7 +54,7 @@ public class MainForumDialog extends BottomSheetDialogFragment {
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     if (vm == null) {
-      vm = new ViewModelProvider(Objects.requireNonNull(getActivity())).get(MainViewModel.class);
+      vm = new ViewModelProvider(this).get(MainForumDialogViewModel.class);
     }
 
     final View view = inflater.inflate(R.layout.main_forum_dialog, container, false);
@@ -66,7 +66,7 @@ public class MainForumDialog extends BottomSheetDialogFragment {
     name = view.findViewById(R.id.main_forum_dialog_name);
     icon = view.findViewById(R.id.main_forum_dialog_icon);
 
-    final Forum forum = Objects.requireNonNull(getArguments()).getParcelable(KEY_FORUM);
+    final Forum forum = requireArguments().getParcelable(KEY_FORUM);
     if (forum != null) {
       title.setText(R.string.main_forum_dialog_title_edit);
       delete.setOnClickListener(v -> {
