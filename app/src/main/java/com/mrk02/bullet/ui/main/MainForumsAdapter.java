@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mrk02.bullet.R;
-import com.mrk02.bullet.model.Forum;
+import com.mrk02.bullet.repository.model.Forum;
 
 import androidx.annotation.NonNull;
 import androidx.core.util.Consumer;

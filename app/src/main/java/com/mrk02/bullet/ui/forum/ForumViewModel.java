@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 
 import com.mrk02.bullet.service.Config;
 import com.mrk02.bullet.service.ConfigLoader;
-import com.mrk02.bullet.service.Page;
+import com.mrk02.bullet.service.model.Page;
 import com.mrk02.bullet.ui.main.MainForumDialogViewModel;
 
 import java.io.FileInputStream;

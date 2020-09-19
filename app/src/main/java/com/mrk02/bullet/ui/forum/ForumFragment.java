@@ -5,9 +5,11 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.mrk02.bullet.R;
-import com.mrk02.bullet.model.Forum;
+import com.mrk02.bullet.repository.model.Forum;
+import com.mrk02.bullet.service.model.Board;
 
 import java.util.Objects;
 
@@ -16,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ForumFragment extends Fragment {
 
@@ -55,7 +58,35 @@ public class ForumFragment extends Fragment {
 
     final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
     new MenuInflater(getContext()).inflate(R.menu.forum, toolbar.getMenu());
-    vm.getPage().observe(getViewLifecycleOwner(), page -> toolbar.setTitle(page.getTitle()));
+
+    final ForumAdapter listAdapter = new ForumAdapter()
+        .factory(Board.class, R.layout.forum_item_board, HolderBoard::new);
+
+    final RecyclerView list = view.findViewById(R.id.forum_list);
+    list.setAdapter(listAdapter);
+
+    vm.getPage().observe(getViewLifecycleOwner(), page -> {
+      toolbar.setTitle(page.title());
+      listAdapter.items(page.boards());
+    });
+  }
+
+  /**
+   *
+   */
+  private static final class HolderBoard extends ForumAdapter.Holder<Board> {
+
+    final TextView title;
+
+    public HolderBoard(@NonNull View itemView) {
+      super(itemView);
+      title = (TextView) itemView;
+    }
+
+    @Override
+    public void bind(Board item) {
+      title.setText(item.title());
+    }
   }
 
 }

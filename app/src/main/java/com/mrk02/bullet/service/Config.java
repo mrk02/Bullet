@@ -1,5 +1,7 @@
 package com.mrk02.bullet.service;
 
+import com.mrk02.bullet.service.model.Page;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;

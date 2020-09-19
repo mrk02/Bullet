@@ -2,7 +2,7 @@ package com.mrk02.bullet.repository;
 
 import android.content.Context;
 
-import com.mrk02.bullet.model.Forum;
+import com.mrk02.bullet.repository.model.Forum;
 
 import androidx.room.Database;
 import androidx.room.Room;

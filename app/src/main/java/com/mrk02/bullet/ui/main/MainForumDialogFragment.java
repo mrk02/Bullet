@@ -16,7 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.mrk02.bullet.R;
-import com.mrk02.bullet.model.Forum;
+import com.mrk02.bullet.repository.model.Forum;
 import com.mrk02.bullet.ui.Util;
 
 import java.util.Objects;
@@ -115,8 +115,8 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment {
           final String url = Objects.requireNonNull(this.url.getText()).toString();
           Util.observeOnce(vm.loadPage(configUri, url), page -> {
             config.setText(configUri.toString());
-            name.setText(page.getTitle());
-            icon.setText(page.getIcon());
+            name.setText(page.title());
+            icon.setText(page.icon());
           });
         } catch (Exception e) {
           Log.e(TAG, "unable to load file", e);

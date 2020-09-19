@@ -6,12 +6,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import com.mrk02.bullet.model.Forum;
 import com.mrk02.bullet.repository.BulletDatabase;
 import com.mrk02.bullet.repository.ForumDao;
+import com.mrk02.bullet.repository.model.Forum;
 import com.mrk02.bullet.service.Config;
 import com.mrk02.bullet.service.ConfigLoader;
-import com.mrk02.bullet.service.Page;
+import com.mrk02.bullet.service.model.Page;
 
 import java.io.File;
 import java.io.FileNotFoundException;

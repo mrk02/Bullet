@@ -1,4 +1,4 @@
-package com.mrk02.bullet.model;
+package com.mrk02.bullet.repository.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

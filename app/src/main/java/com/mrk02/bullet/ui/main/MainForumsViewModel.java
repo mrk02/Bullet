@@ -2,9 +2,9 @@ package com.mrk02.bullet.ui.main;
 
 import android.app.Application;
 
-import com.mrk02.bullet.model.Forum;
 import com.mrk02.bullet.repository.BulletDatabase;
 import com.mrk02.bullet.repository.ForumDao;
+import com.mrk02.bullet.repository.model.Forum;
 
 import java.util.List;
 
