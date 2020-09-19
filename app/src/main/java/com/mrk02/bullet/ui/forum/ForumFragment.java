@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mrk02.bullet.R;
-import com.mrk02.bullet.repository.model.Forum;
 import com.mrk02.bullet.service.model.Board;
 
 import java.util.Objects;
@@ -22,16 +21,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ForumFragment extends Fragment {
 
-  private static final String KEY_FORUM = "ForumFragment_forum";
+  private static final String KEY_FORUM_ID = "ForumFragment_forum_id";
+  private static final String KEY_TYPE = "ForumFragment_type";
   private static final String KEY_URL = "ForumFragment_url";
 
   private ForumViewModel vm;
 
   @NonNull
-  public static ForumFragment newInstance(@NonNull Forum forum, @NonNull String url) {
+  public static ForumFragment newInstance(int forumId, @NonNull String type, @NonNull String url) {
     final ForumFragment fragment = new ForumFragment();
     final Bundle bundle = new Bundle();
-    bundle.putParcelable(KEY_FORUM, forum);
+    bundle.putInt(KEY_FORUM_ID, forumId);
+    bundle.putString(KEY_TYPE, type);
     bundle.putString(KEY_URL, url);
     fragment.setArguments(bundle);
     return fragment;
@@ -51,10 +52,12 @@ public class ForumFragment extends Fragment {
       vm = new ViewModelProvider(this).get(ForumViewModel.class);
     }
 
-    final Forum forum = Objects.requireNonNull(requireArguments().getParcelable(KEY_FORUM));
+    final Bundle args = requireArguments();
+    final int forumId = args.getInt(KEY_FORUM_ID);
+    final String type = Objects.requireNonNull(args.getString(KEY_TYPE));
     final String url = Objects.requireNonNull(requireArguments().getString(KEY_URL));
 
-    vm.loadPage(forum.id, url);
+    vm.loadPage(forumId, type, url);
 
     final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
     new MenuInflater(getContext()).inflate(R.menu.forum, toolbar.getMenu());
@@ -74,7 +77,7 @@ public class ForumFragment extends Fragment {
   /**
    *
    */
-  private static final class HolderBoard extends ForumAdapter.Holder<Board> {
+  private final class HolderBoard extends ForumAdapter.Holder<Board> {
 
     final TextView title;
 
@@ -86,6 +89,11 @@ public class ForumFragment extends Fragment {
     @Override
     public void bind(Board item) {
       title.setText(item.title());
+      title.setOnClickListener(v -> requireActivity().getSupportFragmentManager().beginTransaction()
+          .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
+          .replace(R.id.container, ForumFragment.newInstance(requireArguments().getInt(KEY_FORUM_ID), item.link().type(), item.link().url()))
+          .addToBackStack(null)
+          .commit());
     }
   }
 

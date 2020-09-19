@@ -1,7 +1,6 @@
 package com.mrk02.bullet.ui.forum;
 
 import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -22,7 +21,7 @@ import androidx.lifecycle.MutableLiveData;
 public class ForumViewModel extends AndroidViewModel {
 
   private static Config config;
-  private static long forumId = -1;
+  private static int forumId = -1;
 
   private final MutableLiveData<Page> livePage = new MutableLiveData<>();
 
@@ -34,11 +33,10 @@ public class ForumViewModel extends AndroidViewModel {
   }
 
   @NonNull
-  public static Config loadConfig(@NonNull Context context, long forumId) {
+  public static Config loadConfig(@NonNull Context context, int forumId) {
     if (ForumViewModel.forumId != forumId) {
       synchronized (ForumViewModel.class) {
         if (ForumViewModel.forumId != forumId) {
-          final ContentResolver contentResolver = context.getContentResolver();
           try (InputStream inputStream = new FileInputStream(MainForumDialogViewModel.getConfigFile(context, forumId))) {
             ForumViewModel.config = ConfigLoader.INSTANCE.load(Objects.requireNonNull(inputStream));
             ForumViewModel.forumId = forumId;
@@ -56,13 +54,14 @@ public class ForumViewModel extends AndroidViewModel {
 
   /**
    * @param forumId The id of the forum whose config file to load.
+   * @param type    The type of the page to load.
    * @param url     The url of the page to load.
    */
-  public void loadPage(long forumId, @NonNull String url) {
+  public void loadPage(int forumId, String type, @NonNull String url) {
     AsyncTask.execute(() -> {
       try {
         final Config config = loadConfig(getApplication(), forumId);
-        final Page page = config.parse(Config.MAIN, url);
+        final Page page = config.parse(type, url);
         livePage.postValue(page);
       } catch (Exception e) {
         throw new RuntimeException(e);

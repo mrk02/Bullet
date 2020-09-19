@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mrk02.bullet.R;
+import com.mrk02.bullet.service.Config;
 import com.mrk02.bullet.ui.forum.ForumFragment;
 
 import androidx.annotation.NonNull;
@@ -51,7 +52,7 @@ public class MainForumsFragment extends Fragment {
     final MainForumsAdapter adapter = new MainForumsAdapter(
         forum -> requireActivity().getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
-            .replace(R.id.container, ForumFragment.newInstance(forum, forum.url))
+            .replace(R.id.container, ForumFragment.newInstance(forum.id, Config.MAIN, forum.url))
             .addToBackStack(null)
             .commit(),
         forum -> MainForumDialogFragment.newInstance(forum).show(getChildFragmentManager(), null));
