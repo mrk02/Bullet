@@ -1,5 +1,7 @@
 package com.mrk02.bullet.ui.forum;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -57,12 +59,29 @@ public class ForumFragment extends Fragment {
     final Bundle args = requireArguments();
     final int forumId = args.getInt(KEY_FORUM_ID);
     final String type = Objects.requireNonNull(args.getString(KEY_TYPE));
-    final String url = Objects.requireNonNull(requireArguments().getString(KEY_URL));
+    final String url = Objects.requireNonNull(args.getString(KEY_URL));
 
     vm.loadPage(forumId, type, url, false);
 
     final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
     new MenuInflater(getContext()).inflate(R.menu.forum, toolbar.getMenu());
+    toolbar.setOnMenuItemClickListener(item -> {
+      switch (item.getItemId()) {
+        case R.id.forum_menu_bookmark:
+          return true;
+        case R.id.forum_menu_browser:
+          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+          return true;
+        case R.id.forum_menu_share:
+          final Intent intent = new Intent();
+          intent.setAction(Intent.ACTION_SEND);
+          intent.putExtra(Intent.EXTRA_TEXT, url);
+          intent.setType("text/plain");
+          startActivity(Intent.createChooser(intent, null));
+          return true;
+      }
+      return false;
+    });
 
     final SwipeRefreshLayout refresh = view.findViewById(R.id.forum_refresh);
     refresh.setOnRefreshListener(() -> vm.loadPage(forumId, type, url, true));
