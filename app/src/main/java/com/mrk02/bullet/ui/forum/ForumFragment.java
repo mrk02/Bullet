@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.mrk02.bullet.R;
 import com.mrk02.bullet.service.model.Board;
 
+import java.util.Collections;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ForumFragment extends Fragment {
 
@@ -57,10 +59,13 @@ public class ForumFragment extends Fragment {
     final String type = Objects.requireNonNull(args.getString(KEY_TYPE));
     final String url = Objects.requireNonNull(requireArguments().getString(KEY_URL));
 
-    vm.loadPage(forumId, type, url);
+    vm.loadPage(forumId, type, url, false);
 
     final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
     new MenuInflater(getContext()).inflate(R.menu.forum, toolbar.getMenu());
+
+    final SwipeRefreshLayout refresh = view.findViewById(R.id.forum_refresh);
+    refresh.setOnRefreshListener(() -> vm.loadPage(forumId, type, url, true));
 
     final ForumAdapter listAdapter = new ForumAdapter()
         .factory(Board.class, R.layout.forum_item_board, HolderBoard::new);
@@ -69,8 +74,14 @@ public class ForumFragment extends Fragment {
     list.setAdapter(listAdapter);
 
     vm.getPage().observe(getViewLifecycleOwner(), page -> {
-      toolbar.setTitle(page.title());
-      listAdapter.items(page.boards());
+      if (page == null) {
+        toolbar.setTitle("");
+        listAdapter.items(Collections.emptyList());
+      } else {
+        toolbar.setTitle(page.title());
+        listAdapter.items(page.boards());
+        refresh.setRefreshing(false);
+      }
     });
   }
 

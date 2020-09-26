@@ -56,8 +56,16 @@ public class ForumViewModel extends AndroidViewModel {
    * @param forumId The id of the forum whose config file to load.
    * @param type    The type of the page to load.
    * @param url     The url of the page to load.
+   * @param force   True if the page should be reloaded, even if its already present.
    */
-  public void loadPage(int forumId, String type, @NonNull String url) {
+  public void loadPage(int forumId, @NonNull String type, @NonNull String url, boolean force) {
+    if (livePage.getValue() != null) {
+      if (!force) {
+        return;
+      }
+      livePage.setValue(null);
+    }
+
     AsyncTask.execute(() -> {
       try {
         final Config config = loadConfig(getApplication(), forumId);
