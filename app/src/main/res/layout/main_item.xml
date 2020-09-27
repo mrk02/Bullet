@@ -9,35 +9,35 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/main_forums_item_icon"
+        android:id="@+id/main_item_icon"
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/main_forums_item_title"
+        app:layout_constraintEnd_toStartOf="@+id/main_item_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/main_forums_item_title"
+        android:id="@+id/main_item_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
-        app:layout_constraintBottom_toTopOf="@+id/main_forums_item_subtitle"
+        app:layout_constraintBottom_toTopOf="@+id/main_item_subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/main_forums_item_icon"
+        app:layout_constraintStart_toEndOf="@+id/main_item_icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
-        android:id="@+id/main_forums_item_subtitle"
+        android:id="@+id/main_item_subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/main_forums_item_title"
-        app:layout_constraintTop_toBottomOf="@+id/main_forums_item_title"
+        app:layout_constraintStart_toStartOf="@+id/main_item_title"
+        app:layout_constraintTop_toBottomOf="@+id/main_item_title"
         app:layout_constraintVertical_chainStyle="packed" />
 </androidx.constraintlayout.widget.ConstraintLayout>

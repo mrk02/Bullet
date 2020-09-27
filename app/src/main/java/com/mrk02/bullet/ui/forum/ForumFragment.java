@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class ForumFragment extends Fragment {
+public class ForumFragment extends Fragment implements ViewModelProvider.Factory {
 
   private static final String KEY_FORUM_ID = "ForumFragment_forum_id";
   private static final String KEY_TYPE = "ForumFragment_type";
@@ -53,29 +55,30 @@ public class ForumFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     if (vm == null) {
-      vm = new ViewModelProvider(this).get(ForumViewModel.class);
+      vm = new ViewModelProvider(this, this).get(ForumViewModel.class);
     }
 
-    final Bundle args = requireArguments();
-    final int forumId = args.getInt(KEY_FORUM_ID);
-    final String type = Objects.requireNonNull(args.getString(KEY_TYPE));
-    final String url = Objects.requireNonNull(args.getString(KEY_URL));
-
-    vm.loadPage(forumId, type, url, false);
-
     final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
-    new MenuInflater(getContext()).inflate(R.menu.forum, toolbar.getMenu());
+    final Menu menu = toolbar.getMenu();
+    new MenuInflater(getContext()).inflate(R.menu.forum, menu);
     toolbar.setOnMenuItemClickListener(item -> {
       switch (item.getItemId()) {
         case R.id.forum_menu_bookmark:
+          if (item.isChecked()) {
+            vm.deleteBookmark();
+            item.setChecked(false);
+          } else {
+            vm.insertBookmark();
+            item.setChecked(true);
+          }
           return true;
         case R.id.forum_menu_browser:
-          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(vm.getUrl())));
           return true;
         case R.id.forum_menu_share:
           final Intent intent = new Intent();
           intent.setAction(Intent.ACTION_SEND);
-          intent.putExtra(Intent.EXTRA_TEXT, url);
+          intent.putExtra(Intent.EXTRA_TEXT, vm.getUrl());
           intent.setType("text/plain");
           startActivity(Intent.createChooser(intent, null));
           return true;
@@ -83,8 +86,12 @@ public class ForumFragment extends Fragment {
       return false;
     });
 
+    vm.getBookmark().observe(getViewLifecycleOwner(), bookmark -> {
+      menu.findItem(R.id.forum_menu_bookmark).setChecked(bookmark != null);
+    });
+
     final SwipeRefreshLayout refresh = view.findViewById(R.id.forum_refresh);
-    refresh.setOnRefreshListener(() -> vm.loadPage(forumId, type, url, true));
+    refresh.setOnRefreshListener(vm::loadPage);
 
     final ForumAdapter listAdapter = new ForumAdapter()
         .factory(Board.class, R.layout.forum_item_board, HolderBoard::new);
@@ -102,6 +109,17 @@ public class ForumFragment extends Fragment {
         refresh.setRefreshing(false);
       }
     });
+  }
+
+  @NonNull
+  @Override
+  public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+    final Bundle args = requireArguments();
+    final int forumId = args.getInt(KEY_FORUM_ID);
+    final String type = Objects.requireNonNull(args.getString(KEY_TYPE));
+    final String url = Objects.requireNonNull(args.getString(KEY_URL));
+    //noinspection unchecked
+    return (T) new ForumViewModel(requireActivity().getApplication(), forumId, type, url);
   }
 
   /**
