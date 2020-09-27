@@ -2,7 +2,7 @@ package com.mrk02.bullet.service.model;
 
 import org.simpleframework.xml.Element;
 
-public final class Board {
+public final class Breadcrumb {
 
   @Element
   private String name;

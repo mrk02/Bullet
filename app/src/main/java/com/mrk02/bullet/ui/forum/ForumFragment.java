@@ -10,10 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.mrk02.bullet.R;
 import com.mrk02.bullet.service.model.Board;
+import com.mrk02.bullet.service.model.Breadcrumb;
+import com.mrk02.bullet.service.model.Link;
+import com.mrk02.bullet.service.model.Page;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -58,6 +63,8 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
       vm = new ViewModelProvider(this, this).get(ForumViewModel.class);
     }
 
+    final AppBarLayout appbar = view.findViewById(R.id.forum_appbar);
+
     final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
     final Menu menu = toolbar.getMenu();
     new MenuInflater(getContext()).inflate(R.menu.forum, menu);
@@ -66,10 +73,8 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
         case R.id.forum_menu_bookmark:
           if (item.isChecked()) {
             vm.deleteBookmark();
-            item.setChecked(false);
           } else {
             vm.insertBookmark();
-            item.setChecked(true);
           }
           return true;
         case R.id.forum_menu_browser:
@@ -85,6 +90,14 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
       }
       return false;
     });
+    toolbar.setNavigationOnClickListener(v -> {
+      final Page page = vm.getPage().getValue();
+      if (page != null && !page.breadcrumbs().isEmpty()) {
+        openLink(page.breadcrumbs().get(page.breadcrumbs().size() - 1).link());
+      } else {
+        requireActivity().getSupportFragmentManager().popBackStackImmediate();
+      }
+    });
 
     vm.getBookmark().observe(getViewLifecycleOwner(), bookmark -> {
       menu.findItem(R.id.forum_menu_bookmark).setChecked(bookmark != null);
@@ -95,18 +108,25 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
 
     final ForumAdapter listAdapter = new ForumAdapter()
         .factory(Board.class, R.layout.forum_item_board, HolderBoard::new);
-
     final RecyclerView list = view.findViewById(R.id.forum_list);
     list.setAdapter(listAdapter);
+    list.setNestedScrollingEnabled(false);
+
+    final BreadcrumbAdapter breadcrumbAdapter = new BreadcrumbAdapter();
+    final RecyclerView breadcrumbs = view.findViewById(R.id.forum_breadcrumbs);
+    breadcrumbs.setAdapter(breadcrumbAdapter);
 
     vm.getPage().observe(getViewLifecycleOwner(), page -> {
       if (page == null) {
         toolbar.setTitle("");
+        breadcrumbAdapter.items(Collections.emptyList());
         listAdapter.items(Collections.emptyList());
       } else {
         toolbar.setTitle(page.title());
+        breadcrumbAdapter.items(page.breadcrumbs());
         listAdapter.items(page.boards());
         refresh.setRefreshing(false);
+        appbar.setExpanded(false, false);
       }
     });
   }
@@ -123,6 +143,17 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
   }
 
   /**
+   * @param link The link to open.
+   */
+  private void openLink(Link link) {
+    requireActivity().getSupportFragmentManager().beginTransaction()
+        .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
+        .replace(R.id.container, ForumFragment.newInstance(vm.getForumId(), link.type(), link.url()))
+        .addToBackStack(null)
+        .commit();
+  }
+
+  /**
    *
    */
   private final class HolderBoard extends ForumAdapter.Holder<Board> {
@@ -136,12 +167,52 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
 
     @Override
     public void bind(Board item) {
-      title.setText(item.title());
-      title.setOnClickListener(v -> requireActivity().getSupportFragmentManager().beginTransaction()
-          .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
-          .replace(R.id.container, ForumFragment.newInstance(requireArguments().getInt(KEY_FORUM_ID), item.link().type(), item.link().url()))
-          .addToBackStack(null)
-          .commit());
+      title.setText(item.name());
+      itemView.setOnClickListener(v -> openLink(item.link()));
+    }
+  }
+
+  /**
+   *
+   */
+  private final class HolderBreadcrumb extends RecyclerView.ViewHolder {
+
+    private final TextView text;
+
+    public HolderBreadcrumb(@NonNull View itemView) {
+      super(itemView);
+      text = (TextView) itemView;
+    }
+  }
+
+  /**
+   *
+   */
+  private final class BreadcrumbAdapter extends RecyclerView.Adapter<HolderBreadcrumb> {
+
+    private List<Breadcrumb> items = Collections.emptyList();
+
+    @NonNull
+    @Override
+    public HolderBreadcrumb onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+      return new HolderBreadcrumb(LayoutInflater.from(parent.getContext()).inflate(R.layout.forum_item_breadcrumb, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull HolderBreadcrumb holder, int position) {
+      final Breadcrumb breadcrumb = items.get(position);
+      holder.text.setText(breadcrumb.name());
+      holder.itemView.setOnClickListener(v -> openLink(breadcrumb.link()));
+    }
+
+    @Override
+    public int getItemCount() {
+      return items.size();
+    }
+
+    public void items(List<Breadcrumb> items) {
+      this.items = items;
+      notifyDataSetChanged();
     }
   }
 

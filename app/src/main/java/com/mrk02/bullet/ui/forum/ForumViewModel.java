@@ -111,6 +111,13 @@ public class ForumViewModel extends AndroidViewModel {
   }
 
   /**
+   * @return The id of the forum this page belongs to.
+   */
+  public int getForumId() {
+    return forumId;
+  }
+
+  /**
    * @return The url of the page managed by this view model.
    */
   public String getUrl() {
