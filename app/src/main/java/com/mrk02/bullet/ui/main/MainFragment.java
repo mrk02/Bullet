@@ -37,8 +37,8 @@ public class MainFragment extends Fragment {
     new MenuInflater(getContext()).inflate(R.menu.main, toolbar.getMenu());
 
     final PagerAdapter adapter = new PagerAdapter(getContext(), getChildFragmentManager())
-        .page(R.string.main_forums_title, MainForumsFragment::newInstance)
-        .page(R.string.main_bookmarks_title, MainBookmarksFragment::newInstance);
+        .page(R.string.main_bookmarks_title, MainBookmarksFragment::newInstance)
+        .page(R.string.main_forums_title, MainForumsFragment::newInstance);
 
     final ViewPager pager = view.findViewById(R.id.main_pager);
     pager.setAdapter(adapter);

@@ -63,8 +63,6 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
       vm = new ViewModelProvider(this, this).get(ForumViewModel.class);
     }
 
-    final AppBarLayout appbar = view.findViewById(R.id.forum_appbar);
-
     final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
     final Menu menu = toolbar.getMenu();
     new MenuInflater(getContext()).inflate(R.menu.forum, menu);
@@ -115,6 +113,19 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
     final BreadcrumbAdapter breadcrumbAdapter = new BreadcrumbAdapter();
     final RecyclerView breadcrumbs = view.findViewById(R.id.forum_breadcrumbs);
     breadcrumbs.setAdapter(breadcrumbAdapter);
+
+    final AppBarLayout appbar = view.findViewById(R.id.forum_appbar);
+    appbar.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+      if (list.isNestedScrollingEnabled()) {
+        if (verticalOffset == -appBarLayout.getTotalScrollRange()) {
+          list.setNestedScrollingEnabled(false);
+        }
+      } else {
+        if (verticalOffset == 0) {
+          list.setNestedScrollingEnabled(true);
+        }
+      }
+    });
 
     vm.getPage().observe(getViewLifecycleOwner(), page -> {
       if (page == null) {
