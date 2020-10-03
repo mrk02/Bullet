@@ -37,6 +37,7 @@
                 android:layout_gravity="bottom"
                 app:contentInsetStartWithNavigation="0dp"
                 app:layout_collapseMode="none"
+                app:menu="@menu/forum"
                 app:navigationIcon="?homeAsUpIndicator" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

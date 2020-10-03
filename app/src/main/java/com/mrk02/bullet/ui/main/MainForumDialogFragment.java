@@ -23,9 +23,10 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-public class MainForumDialogFragment extends BottomSheetDialogFragment {
+public class MainForumDialogFragment extends BottomSheetDialogFragment implements ViewModelProvider.Factory {
 
   private static final String TAG = "MainForumDialog";
   private static final String KEY_FORUM = "MainForumDialog_forum";
@@ -54,7 +55,7 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment {
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     if (vm == null) {
-      vm = new ViewModelProvider(this).get(MainForumDialogViewModel.class);
+      vm = new ViewModelProvider(this, this).get(MainForumDialogViewModel.class);
     }
 
     final View view = inflater.inflate(R.layout.main_forum_dialog, container, false);
@@ -66,14 +67,14 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment {
     name = view.findViewById(R.id.main_forum_dialog_name);
     icon = view.findViewById(R.id.main_forum_dialog_icon);
 
-    final Forum forum = requireArguments().getParcelable(KEY_FORUM);
-    if (forum != null) {
+    if (vm.getForum() != null) {
       title.setText(R.string.main_forum_dialog_title_edit);
       delete.setOnClickListener(v -> {
-        vm.deleteForum(forum);
+        vm.deleteForum();
         dismiss();
       });
 
+      final Forum forum = vm.getForum();
       url.setText(forum.url);
       config.setText(forum.config);
       name.setText(forum.name);
@@ -93,7 +94,7 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment {
         REQUEST_FILE));
 
     ok.setOnClickListener(v -> {
-      final Forum.Builder builder = forum != null ? forum.toBuilder() : Forum.builder();
+      final Forum.Builder builder = vm.getForum() != null ? vm.getForum().toBuilder() : Forum.builder();
       vm.insertForum(builder
           .setUrl(Objects.requireNonNull(url.getText()).toString())
           .setConfig(Objects.requireNonNull(config.getText()).toString())
@@ -128,4 +129,11 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment {
     }
   }
 
+  @NonNull
+  @Override
+  public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+    final Forum forum = requireArguments().getParcelable(KEY_FORUM);
+    //noinspection unchecked
+    return (T) new MainForumDialogViewModel(requireActivity().getApplication(), forum);
+  }
 }

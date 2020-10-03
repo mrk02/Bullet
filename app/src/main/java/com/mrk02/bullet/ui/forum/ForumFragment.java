@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -67,8 +65,6 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
     }
 
     final Toolbar toolbar = view.findViewById(R.id.forum_toolbar);
-    final Menu menu = toolbar.getMenu();
-    new MenuInflater(getContext()).inflate(R.menu.forum, menu);
     toolbar.setOnMenuItemClickListener(item -> {
       switch (item.getItemId()) {
         case R.id.forum_menu_bookmark:
@@ -101,7 +97,7 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
     });
 
     vm.getBookmark().observe(getViewLifecycleOwner(), bookmark -> {
-      menu.findItem(R.id.forum_menu_bookmark).setChecked(bookmark != null);
+      toolbar.getMenu().findItem(R.id.forum_menu_bookmark).setChecked(bookmark != null);
     });
 
     final SwipeRefreshLayout refresh = view.findViewById(R.id.forum_refresh);

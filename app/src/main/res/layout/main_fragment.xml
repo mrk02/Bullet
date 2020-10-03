@@ -16,13 +16,16 @@
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentInsetStart="0dp">
+            app:contentInsetStart="0dp"
+            app:menu="@menu/main">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/main_tabs"
                 style="@style/Widget.MaterialComponents.TabLayout.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 app:tabGravity="fill"
                 app:tabMode="scrollable"
                 app:tabPaddingEnd="16dp"

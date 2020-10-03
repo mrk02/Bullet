@@ -8,8 +8,8 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 @Dao
 public interface ForumDao {
@@ -17,8 +17,11 @@ public interface ForumDao {
   @Query("SELECT * FROM Forum")
   LiveData<List<Forum>> findAll();
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Insert
   long insert(Forum forum);
+
+  @Update
+  void update(Forum forum);
 
   @Delete
   void delete(Forum forum);

@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -28,9 +29,12 @@ import androidx.lifecycle.MutableLiveData;
 public class MainForumDialogViewModel extends AndroidViewModel {
 
   private final ForumDao forumDao;
+  private Forum forum;
 
-  public MainForumDialogViewModel(@NonNull Application application) {
+  public MainForumDialogViewModel(@NonNull Application application, @Nullable Forum forum) {
     super(application);
+
+    this.forum = forum;
 
     final BulletDatabase database = BulletDatabase.instance(application);
     forumDao = database.forumDao();
@@ -45,36 +49,49 @@ public class MainForumDialogViewModel extends AndroidViewModel {
    */
   public void insertForum(Forum forum) {
     AsyncTask.execute(() -> {
-      final long forumId = forumDao.insert(forum);
 
-      final File file = getConfigFile(getApplication(), forumId);
-      final File directory = Objects.requireNonNull(file.getParentFile());
-      //noinspection ResultOfMethodCallIgnored
-      directory.mkdirs();
-      try (InputStream inputStream = openUri(Uri.parse(forum.config));
-           OutputStream outputStream = new FileOutputStream(file)) {
-        final byte[] buffer = new byte[4 * 1024];
-        int read;
-        while ((read = inputStream.read(buffer)) != -1) {
-          outputStream.write(buffer, 0, read);
+      if (this.forum == null) {
+        final long forumId = forumDao.insert(forum);
+        importConfig(forum.config, forumId);
+      } else {
+        forumDao.update(forum);
+        if (!this.forum.config.equals(forum.config)) {
+          importConfig(forum.config, forum.id);
         }
-      } catch (Exception e) {
-        throw new RuntimeException(e);
       }
+
+      this.forum = forum;
     });
   }
 
+  private void importConfig(String uri, long forumId) {
+    final File file = getConfigFile(getApplication(), forumId);
+    final File directory = Objects.requireNonNull(file.getParentFile());
+    //noinspection ResultOfMethodCallIgnored
+    directory.mkdirs();
+    try (InputStream inputStream = openUri(Uri.parse(uri));
+         OutputStream outputStream = new FileOutputStream(file)) {
+      final byte[] buffer = new byte[4 * 1024];
+      int read;
+      while ((read = inputStream.read(buffer)) != -1) {
+        outputStream.write(buffer, 0, read);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   /**
-   * @param forum The forum to delete.
+   *
    */
-  public void deleteForum(Forum forum) {
+  public void deleteForum() {
     AsyncTask.execute(() -> {
       final File file = getConfigFile(getApplication(), forum.id);
       if (!file.delete()) {
         throw new IllegalStateException("Could not delete file: " + file);
       }
-
       forumDao.delete(forum);
+      forum = null;
     });
   }
 
@@ -98,10 +115,17 @@ public class MainForumDialogViewModel extends AndroidViewModel {
     return liveData;
   }
 
+  /**
+   * @return The forum.
+   */
+  @Nullable
+  public Forum getForum() {
+    return forum;
+  }
+
   @NonNull
   private InputStream openUri(@NonNull Uri uri) throws FileNotFoundException {
     final ContentResolver contentResolver = getApplication().getContentResolver();
     return Objects.requireNonNull(contentResolver.openInputStream(uri));
   }
-
 }

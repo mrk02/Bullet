@@ -94,7 +94,7 @@ public class MainBookmarksFragment extends Fragment {
         public boolean areContentsTheSame(@NonNull Bookmark.WithForum oldItem, @NonNull Bookmark.WithForum newItem) {
           return ObjectsCompat.equals(oldItem.forum.icon, newItem.forum.icon)
               && ObjectsCompat.equals(oldItem.name, newItem.name)
-              && ObjectsCompat.equals(oldItem.url, newItem.url);
+              && ObjectsCompat.equals(oldItem.forum.name, newItem.forum.name);
         }
       });
     }
@@ -110,7 +110,7 @@ public class MainBookmarksFragment extends Fragment {
       final Bookmark.WithForum bookmark = getItem(position);
 
       holder.title.setText(bookmark.name);
-      holder.subtitle.setText(bookmark.url);
+      holder.subtitle.setText(bookmark.forum.name);
       Glide.with(holder.itemView.getContext())
           .load(bookmark.forum.icon)
           .into(holder.icon);
