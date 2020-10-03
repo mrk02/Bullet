@@ -11,8 +11,10 @@
     <string name="main_forum_dialog_config">Config File</string>
     <string name="main_forum_dialog_name">Name</string>
     <string name="main_forum_dialog_icon">Icon URL</string>
-    <string name="main_forum_dialog_delete">Delete</string>
-    <string name="main_forum_dialog_ok">OK</string>
+    <string name="main_bookmark_dialog_title_edit">Edit Bookmark</string>
+    <string name="main_bookmark_dialog_name">Name</string>
+    <string name="main_dialog_delete">Delete</string>
+    <string name="main_dialog_ok">OK</string>
     <string name="forum_menu_bookmark_title">Bookmark</string>
     <string name="forum_menu_browser_title">Open in Browser…</string>
     <string name="forum_menu_share_title">Share…</string>

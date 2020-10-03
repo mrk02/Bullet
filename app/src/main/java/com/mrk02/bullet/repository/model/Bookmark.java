@@ -1,5 +1,8 @@
 package com.mrk02.bullet.repository.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -8,8 +11,19 @@ import androidx.room.Relation;
 
 @Entity(foreignKeys =
 @ForeignKey(entity = Forum.class, parentColumns = "id", childColumns = "forumId", onDelete = ForeignKey.CASCADE))
-public class Bookmark {
+public class Bookmark implements Parcelable {
 
+  public static final Creator<Bookmark> CREATOR = new Creator<Bookmark>() {
+    @Override
+    public Bookmark createFromParcel(Parcel in) {
+      return new Bookmark(in);
+    }
+
+    @Override
+    public Bookmark[] newArray(int size) {
+      return new Bookmark[size];
+    }
+  };
   @PrimaryKey(autoGenerate = true)
   public final int id;
   @ColumnInfo
@@ -29,8 +43,30 @@ public class Bookmark {
     this.url = url;
   }
 
+  protected Bookmark(Parcel in) {
+    id = in.readInt();
+    forumId = in.readInt();
+    name = in.readString();
+    type = in.readString();
+    url = in.readString();
+  }
+
   public static Builder builder() {
     return new Builder();
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags) {
+    dest.writeInt(id);
+    dest.writeInt(forumId);
+    dest.writeString(name);
+    dest.writeString(type);
+    dest.writeString(url);
+  }
+
+  @Override
+  public int describeContents() {
+    return 0;
   }
 
   public Builder toBuilder() {

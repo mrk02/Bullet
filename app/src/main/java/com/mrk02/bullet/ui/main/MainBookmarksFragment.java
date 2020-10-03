@@ -122,6 +122,10 @@ public class MainBookmarksFragment extends Fragment {
           .replace(R.id.container, ForumFragment.newInstance(bookmark.forumId, bookmark.type, bookmark.url))
           .addToBackStack(null)
           .commit());
+      holder.itemView.setOnLongClickListener(v -> {
+        MainBookmarkDialogFragment.newInstance(bookmark).show(getChildFragmentManager(), null);
+        return true;
+      });
     }
   }
 

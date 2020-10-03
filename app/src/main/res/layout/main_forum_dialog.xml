@@ -100,13 +100,13 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:text="@string/main_forum_dialog_delete" />
+            android:text="@string/main_dialog_delete" />
 
         <Button
             android:id="@+id/main_forum_dialog_ok"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/main_forum_dialog_ok" />
+            android:text="@string/main_dialog_ok" />
     </LinearLayout>
 </LinearLayout>

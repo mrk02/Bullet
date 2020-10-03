@@ -6,6 +6,7 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -21,6 +22,9 @@ public interface BookmarkDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   long insert(Bookmark bookmark);
+
+  @Delete
+  void delete(Bookmark bookmark);
 
   @Query("DELETE FROM Bookmark WHERE forumId = :forumId AND url = :url")
   void delete(int forumId, String url);
