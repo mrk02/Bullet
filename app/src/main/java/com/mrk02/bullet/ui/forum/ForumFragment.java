@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.snackbar.Snackbar;
 import com.mrk02.bullet.R;
 import com.mrk02.bullet.service.model.Board;
 import com.mrk02.bullet.service.model.Breadcrumb;
@@ -23,8 +24,10 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -93,7 +96,7 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
       if (page != null && !page.breadcrumbs().isEmpty()) {
         openLink(page.breadcrumbs().get(page.breadcrumbs().size() - 1).link());
       } else {
-        requireActivity().getSupportFragmentManager().popBackStackImmediate();
+        requireActivity().getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
       }
     });
 
@@ -138,6 +141,20 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
         listAdapter.items(page.boards());
         refresh.setRefreshing(false);
         appbar.setExpanded(false, false);
+      }
+    });
+
+    vm.getException().observe(getViewLifecycleOwner(), exception -> {
+      if (exception != null) {
+        refresh.setRefreshing(false);
+        Snackbar.make(view, Objects.requireNonNull(exception.getLocalizedMessage()), Snackbar.LENGTH_LONG)
+            .setAction(R.string.forum_dialog_details, v -> new AlertDialog.Builder(requireContext())
+                .setTitle(exception.getClass().getCanonicalName())
+                .setMessage(exception.getLocalizedMessage())
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
+                .create()
+                .show())
+            .show();
       }
     });
   }

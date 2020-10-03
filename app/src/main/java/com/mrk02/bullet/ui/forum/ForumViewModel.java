@@ -33,6 +33,7 @@ public class ForumViewModel extends AndroidViewModel {
   private final BookmarkDao bookmarkDao;
 
   private final MutableLiveData<Page> livePage = new MutableLiveData<>();
+  private final MutableLiveData<Exception> liveException = new MutableLiveData<>();
   private final LiveData<Bookmark> liveBookmark;
 
   /**
@@ -80,13 +81,14 @@ public class ForumViewModel extends AndroidViewModel {
    */
   public void loadPage() {
     livePage.setValue(null);
+    liveException.setValue(null);
     AsyncTask.execute(() -> {
       try {
         final Config config = loadConfig(getApplication(), forumId);
         final Page page = config.parse(type, url);
         livePage.postValue(page);
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        liveException.postValue(e);
       }
     });
   }
@@ -129,6 +131,13 @@ public class ForumViewModel extends AndroidViewModel {
    */
   public LiveData<Page> getPage() {
     return livePage;
+  }
+
+  /**
+   * @return any exception that may occur.
+   */
+  public LiveData<Exception> getException() {
+    return liveException;
   }
 
   /**

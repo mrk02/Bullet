@@ -16,4 +16,5 @@
     <string name="forum_menu_bookmark_title">Bookmark</string>
     <string name="forum_menu_browser_title">Open in Browser…</string>
     <string name="forum_menu_share_title">Share…</string>
+    <string name="forum_dialog_details">Details</string>
 </resources>
