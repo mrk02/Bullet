@@ -19,4 +19,7 @@
     <string name="forum_menu_browser_title">Open in Browser…</string>
     <string name="forum_menu_share_title">Share…</string>
     <string name="forum_dialog_details">Details</string>
+    <string name="forum_section_boards">Boards</string>
+    <string name="forum_section_threads">Threads</string>
+    <string name="forum_section_posts">Posts</string>
 </resources>

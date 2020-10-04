@@ -17,7 +17,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.mrk02.bullet.R;
 import com.mrk02.bullet.repository.model.Forum;
-import com.mrk02.bullet.ui.Util;
 
 import java.util.Objects;
 
@@ -36,8 +35,6 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment implement
 
   private TextInputEditText url;
   private TextInputEditText config;
-  private TextInputEditText name;
-  private TextInputEditText icon;
 
   /**
    * @param forum The forum to show in this dialog.
@@ -64,8 +61,8 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment implement
     final Button ok = view.findViewById(R.id.main_forum_dialog_ok);
     url = view.findViewById(R.id.main_forum_dialog_url);
     config = view.findViewById(R.id.main_forum_dialog_config);
-    name = view.findViewById(R.id.main_forum_dialog_name);
-    icon = view.findViewById(R.id.main_forum_dialog_icon);
+    final TextInputEditText name = view.findViewById(R.id.main_forum_dialog_name);
+    final TextInputEditText icon = view.findViewById(R.id.main_forum_dialog_icon);
 
     if (vm.getForum() != null) {
       title.setText(R.string.main_forum_dialog_title_edit);
@@ -104,6 +101,11 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment implement
       dismiss();
     });
 
+    vm.getPage().observe(getViewLifecycleOwner(), page -> {
+      name.setText(page.title());
+      icon.setText(page.icon());
+    });
+
     return view;
   }
 
@@ -114,11 +116,8 @@ public class MainForumDialogFragment extends BottomSheetDialogFragment implement
         try {
           final Uri configUri = Objects.requireNonNull(Objects.requireNonNull(data).getData());
           final String url = Objects.requireNonNull(this.url.getText()).toString();
-          Util.observeOnce(vm.loadPage(configUri, url), page -> {
-            config.setText(configUri.toString());
-            name.setText(page.title());
-            icon.setText(page.icon());
-          });
+          vm.loadPage(configUri, url);
+          config.setText(configUri.toString());
         } catch (Exception e) {
           Log.e(TAG, "unable to load file", e);
           Toast.makeText(getContext(), R.string.main_forums_add_error, Toast.LENGTH_SHORT).show();

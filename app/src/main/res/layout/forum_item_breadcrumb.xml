@@ -15,4 +15,4 @@
     android:paddingEnd="16dp"
     android:paddingBottom="12dp"
     android:textAppearance="?attr/textAppearanceListItem"
-    app:drawableStartCompat="@drawable/forum_breadcrumb" />
+    app:drawableStartCompat="@drawable/chevron_left" />

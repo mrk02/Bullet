@@ -29,6 +29,8 @@ import androidx.lifecycle.MutableLiveData;
 public class MainForumDialogViewModel extends AndroidViewModel {
 
   private final ForumDao forumDao;
+
+  private final MutableLiveData<Page> livePage = new MutableLiveData<>();
   private Forum forum;
 
   public MainForumDialogViewModel(@NonNull Application application, @Nullable Forum forum) {
@@ -99,20 +101,24 @@ public class MainForumDialogViewModel extends AndroidViewModel {
    * @param configUri The uri from which to load the config file.
    * @param url       The url of the page to load.
    */
-  public LiveData<Page> loadPage(@NonNull Uri configUri, @NonNull String url) {
-    final MutableLiveData<Page> liveData = new MutableLiveData<>();
-
+  public void loadPage(@NonNull Uri configUri, @NonNull String url) {
     AsyncTask.execute(() -> {
       try (InputStream inputStream = openUri(configUri)) {
         final Config config = ConfigLoader.INSTANCE.load(inputStream);
         final Page page = config.parse(Config.MAIN, url);
-        liveData.postValue(page);
+        livePage.postValue(page);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
     });
+  }
 
-    return liveData;
+  /**
+   * @return The page.
+   */
+  @NonNull
+  public LiveData<Page> getPage() {
+    return livePage;
   }
 
   /**

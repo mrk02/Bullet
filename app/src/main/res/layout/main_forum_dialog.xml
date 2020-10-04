@@ -42,7 +42,7 @@
         android:layout_marginBottom="8dp"
         android:hint="@string/main_forum_dialog_config"
         app:boxBackgroundMode="filled"
-        app:endIconDrawable="@drawable/main_forums_config"
+        app:endIconDrawable="@drawable/folder"
         app:endIconMode="custom">
 
         <com.google.android.material.textfield.TextInputEditText

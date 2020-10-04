@@ -2,7 +2,6 @@ package com.mrk02.bullet.ui.main;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -34,7 +33,6 @@ public class MainFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     final Toolbar toolbar = view.findViewById(R.id.main_toolbar);
-    new MenuInflater(getContext()).inflate(R.menu.main, toolbar.getMenu());
 
     final PagerAdapter adapter = new PagerAdapter(getContext(), getChildFragmentManager())
         .page(R.string.main_bookmarks_title, MainBookmarksFragment::newInstance)

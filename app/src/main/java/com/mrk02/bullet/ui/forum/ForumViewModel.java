@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.mrk02.bullet.R;
 import com.mrk02.bullet.repository.BookmarkDao;
 import com.mrk02.bullet.repository.BulletDatabase;
 import com.mrk02.bullet.repository.model.Bookmark;
@@ -14,6 +15,9 @@ import com.mrk02.bullet.ui.main.MainForumDialogViewModel;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -32,7 +36,10 @@ public class ForumViewModel extends AndroidViewModel {
 
   private final BookmarkDao bookmarkDao;
 
+  private final Section sectionBoards = new Section(R.string.forum_section_boards);
+
   private final MutableLiveData<Page> livePage = new MutableLiveData<>();
+  private final MutableLiveData<List<Object>> liveItems = new MutableLiveData<>(Collections.emptyList());
   private final MutableLiveData<Exception> liveException = new MutableLiveData<>();
   private final LiveData<Bookmark> liveBookmark;
 
@@ -52,6 +59,8 @@ public class ForumViewModel extends AndroidViewModel {
     final BulletDatabase database = BulletDatabase.instance(application);
     bookmarkDao = database.bookmarkDao();
     liveBookmark = bookmarkDao.find(forumId, url);
+
+    livePage.observeForever(page -> updateItems());
 
     loadPage();
   }
@@ -74,6 +83,30 @@ public class ForumViewModel extends AndroidViewModel {
     }
 
     return config;
+  }
+
+  /**
+   *
+   */
+  public void updateItems() {
+    final Page page = livePage.getValue();
+    final List<Object> items;
+    if (page == null) {
+      items = Collections.emptyList();
+    } else {
+      items = new ArrayList<>();
+      updateItemsSection(items, sectionBoards, page.boards());
+    }
+    liveItems.postValue(items);
+  }
+
+  private void updateItemsSection(List<Object> items, Section section, List<?> sectionItems) {
+    if (!sectionItems.isEmpty()) {
+      items.add(section);
+      if (section.expanded) {
+        items.addAll(sectionItems);
+      }
+    }
   }
 
   /**
@@ -145,6 +178,26 @@ public class ForumViewModel extends AndroidViewModel {
    */
   public LiveData<Bookmark> getBookmark() {
     return liveBookmark;
+  }
+
+  /**
+   * @return the items of this page.
+   */
+  public LiveData<List<Object>> getItems() {
+    return liveItems;
+  }
+
+  /**
+   *
+   */
+  public static final class Section {
+    public final int text;
+    public boolean expanded;
+
+    private Section(int text) {
+      this.text = text;
+      this.expanded = true;
+    }
   }
 
 }

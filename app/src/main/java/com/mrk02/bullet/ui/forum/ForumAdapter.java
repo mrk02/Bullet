@@ -1,24 +1,39 @@
 package com.mrk02.bullet.ui.forum;
 
+import android.annotation.SuppressLint;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Collections;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.Holder<?>> {
+public class ForumAdapter extends ListAdapter<Object, ForumAdapter.Holder<?>> {
 
   private final Map<Class<?>, Integer> viewTypes = new IdentityHashMap<>();
   private final SparseArray<Function<View, Holder<?>>> factories = new SparseArray<>();
-  private List<?> items = Collections.emptyList();
+
+  protected ForumAdapter() {
+    super(new DiffUtil.ItemCallback<Object>() {
+      @Override
+      public boolean areItemsTheSame(@NonNull Object oldItem, @NonNull Object newItem) {
+        return oldItem == newItem;
+      }
+
+      @SuppressLint("DiffUtilEquals")
+      @Override
+      public boolean areContentsTheSame(@NonNull Object oldItem, @NonNull Object newItem) {
+        return oldItem == newItem;
+      }
+    });
+  }
 
   @NonNull
   @Override
@@ -30,18 +45,18 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.Holder<?>> {
   @SuppressWarnings("unchecked")
   @Override
   public void onBindViewHolder(@NonNull Holder holder, int position) {
-    holder.bind(items.get(position));
+    holder.bind(getCurrentList().get(position));
   }
 
   @Override
   public int getItemCount() {
-    return items.size();
+    return getCurrentList().size();
   }
 
   @SuppressWarnings("ConstantConditions")
   @Override
   public int getItemViewType(int position) {
-    final Class<?> clazz = items.get(position).getClass();
+    final Class<?> clazz = getCurrentList().get(position).getClass();
     return viewTypes.get(clazz);
   }
 
@@ -50,11 +65,6 @@ public class ForumAdapter extends RecyclerView.Adapter<ForumAdapter.Holder<?>> {
     viewTypes.put(clazz, viewType);
     factories.put(viewType, (Function) factory);
     return this;
-  }
-
-  public void items(List<?> items) {
-    this.items = items;
-    super.notifyDataSetChanged();
   }
 
   public static abstract class Holder<T> extends RecyclerView.ViewHolder {

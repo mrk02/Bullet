@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -15,6 +16,7 @@ import com.mrk02.bullet.service.model.Board;
 import com.mrk02.bullet.service.model.Breadcrumb;
 import com.mrk02.bullet.service.model.Link;
 import com.mrk02.bullet.service.model.Page;
+import com.mrk02.bullet.ui.forum.ForumViewModel.Section;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +38,6 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
   private static final String KEY_FORUM_ID = "ForumFragment_forum_id";
   private static final String KEY_TYPE = "ForumFragment_type";
   private static final String KEY_URL = "ForumFragment_url";
-
   private ForumViewModel vm;
 
   @NonNull
@@ -104,7 +105,8 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
     refresh.setOnRefreshListener(vm::loadPage);
 
     final ForumAdapter listAdapter = new ForumAdapter()
-        .factory(Board.class, R.layout.forum_item_board, HolderBoard::new);
+        .factory(Board.class, R.layout.forum_item_board, HolderBoard::new)
+        .factory(Section.class, R.layout.forum_item_section, HolderSection::new);
     final RecyclerView list = view.findViewById(R.id.forum_list);
     list.setAdapter(listAdapter);
     list.setNestedScrollingEnabled(false);
@@ -130,14 +132,14 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
       if (page == null) {
         toolbar.setTitle("");
         breadcrumbAdapter.items(Collections.emptyList());
-        listAdapter.items(Collections.emptyList());
       } else {
         toolbar.setTitle(page.title());
         breadcrumbAdapter.items(page.breadcrumbs());
-        listAdapter.items(page.boards());
         refresh.setRefreshing(false);
         appbar.setExpanded(false, false);
       }
+
+      vm.getItems().observe(getViewLifecycleOwner(), listAdapter::submitList);
     });
 
     vm.getException().observe(getViewLifecycleOwner(), exception -> {
@@ -180,20 +182,40 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
   /**
    *
    */
-  private final class HolderBoard extends ForumAdapter.Holder<Board> {
+  private final class HolderSection extends ForumAdapter.Holder<Section> {
 
-    final TextView title;
+    public HolderSection(@NonNull View itemView) {
+      super(itemView);
+    }
+
+    @Override
+    public void bind(Section item) {
+      final CheckBox checkBox = (CheckBox) itemView;
+      checkBox.setText(item.text);
+      checkBox.setChecked(item.expanded);
+      checkBox.setOnCheckedChangeListener((v, checked) -> {
+        item.expanded = checked;
+        vm.updateItems();
+      });
+    }
+
+  }
+
+  /**
+   *
+   */
+  private final class HolderBoard extends ForumAdapter.Holder<Board> {
 
     public HolderBoard(@NonNull View itemView) {
       super(itemView);
-      title = (TextView) itemView;
     }
 
     @Override
     public void bind(Board item) {
-      title.setText(item.name());
+      ((TextView) itemView).setText(item.name());
       itemView.setOnClickListener(v -> openLink(item.link()));
     }
+
   }
 
   /**
@@ -201,12 +223,10 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
    */
   private final class HolderBreadcrumb extends RecyclerView.ViewHolder {
 
-    private final TextView text;
-
     public HolderBreadcrumb(@NonNull View itemView) {
       super(itemView);
-      text = (TextView) itemView;
     }
+
   }
 
   /**
@@ -225,7 +245,7 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
     @Override
     public void onBindViewHolder(@NonNull HolderBreadcrumb holder, int position) {
       final Breadcrumb breadcrumb = items.get(position);
-      holder.text.setText(breadcrumb.name());
+      ((TextView) holder.itemView).setText(breadcrumb.name());
       holder.itemView.setOnClickListener(v -> openLink(breadcrumb.link()));
     }
 
