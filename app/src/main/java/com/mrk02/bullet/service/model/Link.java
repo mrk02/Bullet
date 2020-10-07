@@ -8,7 +8,7 @@ public final class Link {
   @Text
   private String url;
 
-  @Attribute
+  @Attribute(required = false)
   private String type;
 
   public String url() {

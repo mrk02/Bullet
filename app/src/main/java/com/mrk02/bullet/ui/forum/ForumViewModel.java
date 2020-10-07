@@ -16,11 +16,13 @@ import com.mrk02.bullet.ui.main.MainForumDialogViewModel;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -36,7 +38,9 @@ public class ForumViewModel extends AndroidViewModel {
 
   private final BookmarkDao bookmarkDao;
 
-  private final Section sectionBoards = new Section(R.string.forum_section_boards);
+  private final List<Section> sections = Arrays.asList(
+      new Section(R.string.forum_section_boards, Page::boards),
+      new Section(R.string.forum_section_threads, Page::threads));
 
   private final MutableLiveData<Page> livePage = new MutableLiveData<>();
   private final MutableLiveData<List<Object>> liveItems = new MutableLiveData<>(Collections.emptyList());
@@ -60,7 +64,7 @@ public class ForumViewModel extends AndroidViewModel {
     bookmarkDao = database.bookmarkDao();
     liveBookmark = bookmarkDao.find(forumId, url);
 
-    livePage.observeForever(page -> updateItems());
+    livePage.observeForever(page -> buildItems());
 
     loadPage();
   }
@@ -88,25 +92,18 @@ public class ForumViewModel extends AndroidViewModel {
   /**
    *
    */
-  public void updateItems() {
+  public void buildItems() {
     final Page page = livePage.getValue();
     final List<Object> items;
     if (page == null) {
       items = Collections.emptyList();
     } else {
       items = new ArrayList<>();
-      updateItemsSection(items, sectionBoards, page.boards());
-    }
-    liveItems.postValue(items);
-  }
-
-  private void updateItemsSection(List<Object> items, Section section, List<?> sectionItems) {
-    if (!sectionItems.isEmpty()) {
-      items.add(section);
-      if (section.expanded) {
-        items.addAll(sectionItems);
+      for (Section section : sections) {
+        section.buildItems(items, page);
       }
     }
+    liveItems.postValue(items);
   }
 
   /**
@@ -192,11 +189,23 @@ public class ForumViewModel extends AndroidViewModel {
    */
   public static final class Section {
     public final int text;
+    private final Function<Page, List<?>> extractor;
     public boolean expanded;
 
-    private Section(int text) {
+    private Section(int text, Function<Page, List<?>> extractor) {
       this.text = text;
+      this.extractor = extractor;
       this.expanded = true;
+    }
+
+    private void buildItems(List<Object> items, Page page) {
+      final List<?> sectionItems = extractor.apply(page);
+      if (!sectionItems.isEmpty()) {
+        items.add(this);
+        if (expanded) {
+          items.addAll(sectionItems);
+        }
+      }
     }
   }
 

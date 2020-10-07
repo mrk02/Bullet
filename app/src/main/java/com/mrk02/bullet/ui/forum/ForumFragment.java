@@ -16,6 +16,7 @@ import com.mrk02.bullet.service.model.Board;
 import com.mrk02.bullet.service.model.Breadcrumb;
 import com.mrk02.bullet.service.model.Link;
 import com.mrk02.bullet.service.model.Page;
+import com.mrk02.bullet.service.model.Thread;
 import com.mrk02.bullet.ui.forum.ForumViewModel.Section;
 
 import java.util.Collections;
@@ -106,6 +107,7 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
 
     final ForumAdapter listAdapter = new ForumAdapter()
         .factory(Board.class, R.layout.forum_item_board, HolderBoard::new)
+        .factory(com.mrk02.bullet.service.model.Thread.class, R.layout.forum_item_thread, HolderThread::new)
         .factory(Section.class, R.layout.forum_item_section, HolderSection::new);
     final RecyclerView list = view.findViewById(R.id.forum_list);
     list.setAdapter(listAdapter);
@@ -172,11 +174,17 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
    * @param link The link to open.
    */
   private void openLink(Link link) {
-    requireActivity().getSupportFragmentManager().beginTransaction()
-        .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
-        .replace(R.id.container, ForumFragment.newInstance(vm.getForumId(), link.type(), link.url()))
-        .addToBackStack(null)
-        .commit();
+    final String type = link.type();
+    final String url = link.url();
+    if (type == null) {
+      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+    } else {
+      requireActivity().getSupportFragmentManager().beginTransaction()
+          .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
+          .replace(R.id.container, ForumFragment.newInstance(vm.getForumId(), type, url))
+          .addToBackStack(null)
+          .commit();
+    }
   }
 
   /**
@@ -195,7 +203,7 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
       checkBox.setChecked(item.expanded);
       checkBox.setOnCheckedChangeListener((v, checked) -> {
         item.expanded = checked;
-        vm.updateItems();
+        vm.buildItems();
       });
     }
 
@@ -216,6 +224,22 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
       itemView.setOnClickListener(v -> openLink(item.link()));
     }
 
+  }
+
+  /**
+   *
+   */
+  private final class HolderThread extends ForumAdapter.Holder<com.mrk02.bullet.service.model.Thread> {
+
+    public HolderThread(@NonNull View itemView) {
+      super(itemView);
+    }
+
+    @Override
+    public void bind(Thread item) {
+      ((TextView) itemView).setText(item.name());
+      itemView.setOnClickListener(v -> openLink(item.link()));
+    }
   }
 
   /**

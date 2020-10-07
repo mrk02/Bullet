@@ -22,6 +22,9 @@ public final class Page {
   @ElementList(required = false)
   private List<Board> boards = new ArrayList<>();
 
+  @ElementList(required = false)
+  private List<Thread> threads = new ArrayList<>();
+
   public String title() {
     return title;
   }
@@ -36,5 +39,9 @@ public final class Page {
 
   public List<Board> boards() {
     return boards;
+  }
+
+  public List<Thread> threads() {
+    return threads;
   }
 }
