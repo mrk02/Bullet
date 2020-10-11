@@ -4,7 +4,8 @@ import com.mrk02.bullet.service.model.Page;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.context.Context;
+import org.apache.velocity.app.event.EventCartridge;
+import org.apache.velocity.app.event.implement.EscapeXmlReference;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.simpleframework.xml.Serializer;
@@ -60,7 +61,11 @@ public final class Config {
   private void parse(@NonNull String name, @NonNull String url, Writer writer) throws IOException {
     final Document document = Jsoup.connect(url).get();
 
-    final Context context = new VelocityContext();
+    final EventCartridge eventCartridge = new EventCartridge();
+    eventCartridge.addReferenceInsertionEventHandler(new EscapeXmlReference());
+
+    final VelocityContext context = new VelocityContext();
+    context.attachEventCartridge(eventCartridge);
     context.put("doc", document);
 
     final Template template = Objects.requireNonNull(templates.get(name));
