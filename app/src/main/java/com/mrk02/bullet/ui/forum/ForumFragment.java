@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -19,7 +21,11 @@ import com.mrk02.bullet.service.model.Page;
 import com.mrk02.bullet.service.model.Thread;
 import com.mrk02.bullet.ui.forum.ForumViewModel.Section;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -147,10 +153,21 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
     vm.getException().observe(getViewLifecycleOwner(), exception -> {
       if (exception != null) {
         refresh.setRefreshing(false);
-        Snackbar.make(view, Objects.requireNonNull(exception.getLocalizedMessage()), Snackbar.LENGTH_LONG)
+        final String message = exception.getLocalizedMessage() != null ? exception.getLocalizedMessage() : exception.getClass().getName();
+        final String stacktrace;
+
+        try (StringWriter stringWriter = new StringWriter();
+             PrintWriter printWriter = new PrintWriter(stringWriter)) {
+          exception.printStackTrace(printWriter);
+          stacktrace = stringWriter.toString();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG)
             .setAction(R.string.forum_dialog_details, v -> new AlertDialog.Builder(requireContext())
                 .setTitle(exception.getClass().getCanonicalName())
-                .setMessage(exception.getLocalizedMessage())
+                .setMessage(stacktrace)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
                 .create()
                 .show())
@@ -231,14 +248,29 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
    */
   private final class HolderThread extends ForumAdapter.Holder<com.mrk02.bullet.service.model.Thread> {
 
+    private final TextView name;
+    private final ImageView sticky;
+    private final TextView user;
+    private final TextView timestamp;
+    private final ImageButton latest;
+
     public HolderThread(@NonNull View itemView) {
       super(itemView);
+      name = itemView.findViewById(R.id.forum_item_thread_name);
+      sticky = itemView.findViewById(R.id.forum_item_thread_info_sticky);
+      user = itemView.findViewById(R.id.forum_item_thread_info_user);
+      timestamp = itemView.findViewById(R.id.forum_item_thread_info_timestamp);
+      latest = itemView.findViewById(R.id.forum_item_thread_latest);
     }
 
     @Override
     public void bind(Thread item) {
-      ((TextView) itemView).setText(item.name());
+      name.setText(item.name());
+      sticky.setVisibility(item.sticky() ? View.VISIBLE : View.GONE);
+      user.setText(item.user());
+      timestamp.setText(new Date(item.timestamp() * 1000).toString());
       itemView.setOnClickListener(v -> openLink(item.link()));
+      latest.setOnClickListener(v -> openLink(item.latest()));
     }
   }
 

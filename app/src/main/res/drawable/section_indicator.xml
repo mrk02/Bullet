@@ -1,8 +1,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_checked="true">
-        <rotate android:id="@+id/section_indicator_collapsed" android:drawable="@drawable/chevron_left" android:fromDegrees="-90" android:pivotX="50%" android:pivotY="50%" android:toDegrees="-90" />
+        <rotate android:id="@+id/section_indicator_collapsed" android:drawable="@drawable/chevron_left" android:fromDegrees="90" android:pivotX="50%" android:pivotY="50%" android:toDegrees="-90" />
     </item>
     <item>
-        <rotate android:id="@+id/section_indicator_expanded" android:drawable="@drawable/chevron_left" android:fromDegrees="90" android:pivotX="50%" android:pivotY="50%" android:toDegrees="90" />
+        <rotate android:id="@+id/section_indicator_expanded" android:drawable="@drawable/chevron_left" android:fromDegrees="-90" android:pivotX="50%" android:pivotY="50%" android:toDegrees="90" />
     </item>
 </selector>
