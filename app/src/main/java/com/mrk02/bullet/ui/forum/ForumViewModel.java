@@ -2,6 +2,7 @@ package com.mrk02.bullet.ui.forum;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.mrk02.bullet.R;
@@ -15,6 +16,8 @@ import com.mrk02.bullet.ui.main.MainForumDialogViewModel;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,6 +29,7 @@ import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.preference.PreferenceManager;
 
 public class ForumViewModel extends AndroidViewModel {
 
@@ -47,6 +51,8 @@ public class ForumViewModel extends AndroidViewModel {
   private final MutableLiveData<Exception> liveException = new MutableLiveData<>();
   private final LiveData<Bookmark> liveBookmark;
 
+  private final DateFormat dateFormat;
+
   /**
    * @param application The application.
    * @param forumId     The forumId.
@@ -67,6 +73,14 @@ public class ForumViewModel extends AndroidViewModel {
     livePage.observeForever(page -> buildItems());
 
     loadPage();
+
+    final SharedPreferences sharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(application);
+    final String dateFormat = sharedPreferences.getString(
+        application.getString(R.string.settings_forum_date_format_key),
+        application.getString(R.string.settings_forum_date_format_default));
+    this.dateFormat = new SimpleDateFormat(dateFormat,
+        application.getResources().getConfiguration().locale);
   }
 
   @NonNull
@@ -182,6 +196,13 @@ public class ForumViewModel extends AndroidViewModel {
    */
   public LiveData<List<Object>> getItems() {
     return liveItems;
+  }
+
+  /**
+   * @return the date format.
+   */
+  public DateFormat getDateFormat() {
+    return dateFormat;
   }
 
   /**

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.mrk02.bullet.R;
 import com.mrk02.bullet.ui.PagerAdapter;
+import com.mrk02.bullet.ui.settings.SettingsFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,17 @@ public class MainFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     final Toolbar toolbar = view.findViewById(R.id.main_toolbar);
+    toolbar.setOnMenuItemClickListener(item -> {
+      if (item.getItemId() == R.id.main_menu_settings) {
+        requireActivity().getSupportFragmentManager().beginTransaction()
+            .setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_open_exit, R.anim.fragment_close_enter, R.anim.fragment_close_exit)
+            .replace(R.id.container, SettingsFragment.newInstance())
+            .addToBackStack(null)
+            .commit();
+        return true;
+      }
+      return false;
+    });
 
     final PagerAdapter adapter = new PagerAdapter(getContext(), getChildFragmentManager())
         .page(R.string.main_bookmarks_title, MainBookmarksFragment::newInstance)

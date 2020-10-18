@@ -22,4 +22,10 @@
     <string name="forum_section_boards">Boards</string>
     <string name="forum_section_threads">Threads</string>
     <string name="forum_section_posts">Posts</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_forum_title">Forum</string>
+    <string name="settings_forum_date_format_title">Date Format</string>
+    <string name="settings_forum_date_format_summary">The date format used to render timestamps</string>
+    <string name="settings_forum_date_format_key">settings_forum_date_format</string>
+    <string name="settings_forum_date_format_default">d. MMMM yyyy</string>
 </resources>

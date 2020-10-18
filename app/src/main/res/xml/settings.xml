@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout="@layout/settings_fragment">
+
+    <PreferenceCategory android:title="@string/settings_forum_title">
+
+        <EditTextPreference
+            app:defaultValue="@string/settings_forum_date_format_default"
+            app:key="@string/settings_forum_date_format_key"
+            app:summary="@string/settings_forum_date_format_summary"
+            app:title="@string/settings_forum_date_format_title" />
+    </PreferenceCategory>
+</PreferenceScreen>

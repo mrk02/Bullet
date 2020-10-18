@@ -7,15 +7,19 @@ public final class Thread {
   @Element
   private String name;
 
+  @SuppressWarnings("FieldMayBeFinal")
   @Element(required = false)
-  private final boolean sticky = false;
+  private boolean sticky = false;
+
   @Element
   private String user;
+
   @Element
   private long timestamp;
 
   @Element
   private Link link;
+
   @Element
   private Link latest;
 

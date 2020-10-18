@@ -268,7 +268,7 @@ public class ForumFragment extends Fragment implements ViewModelProvider.Factory
       name.setText(item.name());
       sticky.setVisibility(item.sticky() ? View.VISIBLE : View.GONE);
       user.setText(item.user());
-      timestamp.setText(new Date(item.timestamp() * 1000).toString());
+      timestamp.setText(vm.getDateFormat().format(new Date(item.timestamp() * 1000)));
       itemView.setOnClickListener(v -> openLink(item.link()));
       latest.setOnClickListener(v -> openLink(item.latest()));
     }
